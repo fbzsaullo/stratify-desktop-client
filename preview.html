@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Stratify — Preview UI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  /* =====================================================
+     STRATIFY DESIGN SYSTEM — PREVIEW
+     ===================================================== */
+  :root {
+    --bg-primary:    #0B0F14;
+    --bg-secondary:  #0F1419;
+    --surface:       #121821;
+    --surface-raised:#1A2233;
+    --surface-overlay:#1E2A3A;
+    --border-subtle: #1E2A3A;
+    --border:        #243044;
+    --border-strong: #2E3D55;
+    --primary:       #4F8CFF;
+    --primary-hover: #6B9FFF;
+    --primary-muted: rgba(79,140,255,0.15);
+    --success:       #22C55E;
+    --success-muted: rgba(34,197,94,0.15);
+    --warning:       #F59E0B;
+    --warning-muted: rgba(245,158,11,0.15);
+    --danger:        #EF4444;
+    --danger-muted:  rgba(239,68,68,0.15);
+    --text-primary:  #E5E7EB;
+    --text-secondary:#9CA3AF;
+    --text-tertiary: #6B7280;
+    --sidebar-w:     220px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    height: 100vh;
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+    font-feature-settings: "cv11","ss01","ss03";
+    user-select: none;
+  }
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 100px; }
+
+  /* === LAYOUT === */
+  .app { display: flex; height: 100vh; }
+  .sidebar {
+    width: var(--sidebar-w);
+    background: var(--surface);
+    border-right: 1px solid var(--border-subtle);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+  }
+  .main {
+    flex: 1;
+    background: var(--bg-secondary);
+    overflow-y: auto;
+  }
+  .content { padding: 24px; max-width: 1100px; display: flex; flex-direction: column; gap: 20px; }
+
+  /* === SIDEBAR === */
+  .sidebar-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 20px 16px;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .logo-mark {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #4F8CFF 0%, #7B5EA7 100%);
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-weight: 700; font-size: 14px;
+    box-shadow: 0 0 16px rgba(79,140,255,0.35);
+    flex-shrink: 0;
+  }
+  .logo-text { display: flex; flex-direction: column; }
+  .logo-name { font-size: 14px; font-weight: 700; line-height: 1.1; }
+  .logo-sub  { font-size: 11px; color: var(--text-tertiary); }
+
+  nav { padding: 12px 8px; display: flex; flex-direction: column; gap: 2px; flex: 1; }
+  .nav-label { font-size: 10px; color: var(--text-tertiary); font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 12px 8px; }
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 12px; border-radius: 8px;
+    font-size: 13px; font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.15s;
+    border: 1px solid transparent;
+  }
+  .nav-item:hover { background: var(--surface-raised); color: var(--text-primary); }
+  .nav-item.active {
+    background: var(--primary-muted);
+    color: var(--primary);
+    border-color: rgba(79,140,255,0.2);
+  }
+  .nav-icon { width: 16px; text-align: center; }
+
+  /* === CARDS === */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.04);
+  }
+
+  /* === PAGE HEADER === */
+  .page-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+  .page-title { font-size: 26px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; }
+  .page-title .gradient { background: linear-gradient(135deg,#4F8CFF,#a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .page-sub { font-size: 14px; color: var(--text-secondary); margin-top: 4px; }
+
+  /* === BUTTONS === */
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 500;
+    cursor: pointer; border: none; transition: all 0.15s;
+  }
+  .btn-primary {
+    background: var(--primary); color: white;
+    box-shadow: 0 0 0 1px rgba(79,140,255,0.3);
+  }
+  .btn-primary:hover { background: var(--primary-hover); box-shadow: 0 0 16px rgba(79,140,255,0.3); }
+
+  /* === STATS GRID === */
+  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .stat-card { padding: 16px; display: flex; flex-direction: column; gap: 6px; }
+  .stat-label { font-size: 12px; color: var(--text-secondary); display: flex; align-items: center; justify-content: space-between; }
+  .stat-icon { font-size: 14px; opacity: 0.6; }
+  .stat-value { font-size: 26px; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; }
+  .stat-value.primary { color: var(--primary); }
+  .stat-value.success { color: var(--success); text-shadow: 0 0 16px rgba(34,197,94,0.3); }
+  .stat-value.danger  { color: var(--danger);  }
+  .stat-value.warning { color: var(--warning);  }
+  .stat-trend { font-size: 11px; display: flex; align-items: center; gap: 4px; }
+  .stat-trend.up   { color: var(--success); }
+  .stat-trend.down { color: var(--danger);  }
+
+  /* === MAIN GRID === */
+  .main-grid { display: grid; grid-template-columns: 240px 1fr; gap: 16px; }
+
+  /* === SKILL BARS === */
+  .skill-section { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+  .section-title { font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-tertiary); }
+  .skill-bar-row { display: flex; flex-direction: column; gap: 6px; }
+  .skill-row-label { display: flex; justify-content: space-between; font-size: 12px; }
+  .skill-row-label span:first-child { color: var(--text-secondary); }
+  .skill-row-label span:last-child  { color: var(--text-primary); font-weight: 500; font-variant-numeric: tabular-nums; }
+  .progress-track { height: 6px; background: var(--surface-overlay); border-radius: 100px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 100px; transition: width 1s ease-out; }
+  .fill-success { background: var(--success); }
+  .fill-primary { background: var(--primary); }
+  .fill-warning { background: var(--warning); }
+  .fill-danger  { background: var(--danger);  }
+
+  /* === FEEDBACK SECTION === */
+  .feedback-section { padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+  .section-header { display: flex; align-items: center; gap: 8px; }
+  .section-hr { flex: 1; height: 1px; background: var(--border-subtle); }
+
+  .feedback-item {
+    display: flex; gap: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    padding: 14px;
+    border-left-width: 2px;
+    animation: slideUp 0.25s ease-out;
+  }
+  @keyframes slideUp { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
+  .fb-warning { border-left-color: var(--warning); background: rgba(245,158,11,0.04); }
+  .fb-error   { border-left-color: var(--danger);  background: rgba(239,68,68,0.04); }
+  .fb-success { border-left-color: var(--success); background: rgba(34,197,94,0.04); }
+  .fb-info    { border-left-color: var(--primary);  background: rgba(79,140,255,0.04); }
+  .fb-icon  { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+  .fb-body  { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+  .fb-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+  .fb-title { font-size: 13px; font-weight: 500; color: var(--text-primary); line-height: 1.3; }
+  .fb-source { font-size: 10px; color: var(--text-tertiary); font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; }
+  .fb-desc  { font-size: 12px; color: var(--text-secondary); line-height: 1.6; }
+  .fb-tip {
+    display: flex; gap: 8px;
+    background: var(--surface-raised);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 12px; color: var(--text-secondary);
+  }
+  .tip-icon { color: var(--primary); }
+
+  /* === BADGES === */
+  .badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 2px 8px; border-radius: 6px;
+    font-size: 10px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.04em;
+    white-space: nowrap; flex-shrink: 0;
+  }
+  .dot { width: 6px; height: 6px; border-radius: 50%; }
+  .badge-error   { background: var(--danger-muted);  color: var(--danger);  border: 1px solid rgba(239,68,68,0.25); }
+  .badge-warning { background: var(--warning-muted); color: var(--warning); border: 1px solid rgba(245,158,11,0.25); }
+  .badge-success { background: var(--success-muted); color: var(--success); border: 1px solid rgba(34,197,94,0.25); }
+  .badge-info    { background: var(--primary-muted); color: var(--primary); border: 1px solid rgba(79,140,255,0.25); }
+  .badge-neutral { background: var(--surface-raised); color: var(--text-secondary); border: 1px solid var(--border); }
+
+  /* === MATCH TABLE === */
+  .match-table-section { display: flex; flex-direction: column; gap: 12px; }
+  table { width: 100%; border-collapse: collapse; }
+  thead tr { border-bottom: 1px solid var(--border-subtle); }
+  th { padding: 10px 16px; text-align: left; font-size: 11px; font-weight: 500; color: var(--text-tertiary); }
+  td { padding: 11px 16px; font-size: 13px; }
+  tbody tr { border-bottom: 1px solid var(--border-subtle); transition: background 0.1s; cursor: pointer; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: var(--surface-raised); }
+  .map-name { font-weight: 600; color: var(--text-primary); }
+  .map-score-val { font-size: 18px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .text-muted { color: var(--text-secondary); }
+  .text-tertiary { color: var(--text-tertiary); font-size: 12px; }
+  .confidence { display: flex; align-items: center; gap: 6px; }
+  .conf-bar { width: 50px; height: 4px; background: var(--surface-overlay); border-radius: 100px; overflow: hidden; }
+  .conf-fill { height: 100%; border-radius: 100px; background: var(--primary); opacity: 0.6; }
+
+  /* === PAGE TABS (Report) === */
+  .tab-group { display: flex; gap: 1px; background: var(--surface); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 3px; width: fit-content; }
+  .tab { padding: 5px 14px; border-radius: 6px; font-size: 12px; font-weight: 500; cursor: pointer; color: var(--text-tertiary); transition: all 0.15s; }
+  .tab.active { background: var(--surface-raised); color: var(--text-primary); }
+
+  /* === SCORE RING === */
+  .score-ring-wrap { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 16px; }
+  .score-ring-label { font-size: 11px; color: var(--text-tertiary); text-align: center; }
+
+  /* === METRICS GRID === */
+  .metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .metric-card { padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+  .metric-header { display: flex; align-items: center; gap: 8px; color: var(--text-secondary); font-size: 12px; }
+  .pattern-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 12px; border-radius: 8px;
+    background: var(--surface-raised);
+    transition: background 0.1s; cursor: default;
+  }
+  .pattern-row:hover { background: var(--surface-overlay); }
+  .pattern-emoji { font-size: 18px; }
+  .pattern-label { flex: 1; font-size: 12px; color: var(--text-secondary); }
+  .pattern-count { font-size: 16px; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+  /* Expandable section */
+  .analyzer-section { overflow: hidden; }
+  .analyzer-header {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 20px; cursor: pointer;
+    transition: background 0.15s;
+  }
+  .analyzer-header:hover { background: rgba(255,255,255,0.02); }
+  .analyzer-title { font-size: 14px; font-weight: 600; color: var(--text-primary); flex: 1; }
+  .analyzer-chevron { font-size: 12px; color: var(--text-tertiary); }
+  .analyzer-body { border-top: 1px solid var(--border-subtle); padding: 16px 20px; display: flex; flex-direction: column; gap: 10px; }
+
+  /* Toggle */
+  .toggle-track {
+    position: relative; width: 44px; height: 24px; border-radius: 100px; cursor: pointer;
+    transition: background 0.2s; flex-shrink: 0;
+  }
+  .toggle-track.on  { background: var(--primary); box-shadow: 0 0 12px rgba(79,140,255,0.35); }
+  .toggle-track.off { background: var(--surface-overlay); border: 1px solid var(--border); }
+  .toggle-thumb {
+    position: absolute; top: 2px; left: 2px;
+    width: 20px; height: 20px; border-radius: 50%; background: white;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+    transition: transform 0.2s;
+  }
+  .toggle-track.on .toggle-thumb { transform: translateX(20px); }
+
+  /* Feature toggle card */
+  .feature-card {
+    display: flex; align-items: flex-start; gap: 16px;
+    padding: 16px; border-radius: 12px; border: 1px solid var(--border-subtle);
+    background: var(--surface); transition: all 0.2s;
+  }
+  .feature-card.enabled { background: rgba(79,140,255,0.04); border-color: rgba(79,140,255,0.25); }
+  .feature-card.locked { opacity: 0.5; }
+  .feature-icon { width: 40px; height: 40px; border-radius: 10px; background: var(--surface-raised); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+  .feature-card.enabled .feature-icon { background: var(--primary-muted); }
+  .feature-info { flex: 1; }
+  .feature-name-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; flex-wrap: wrap; }
+  .feature-name { font-size: 14px; font-weight: 600; }
+  .feature-desc { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+  .feature-ctrl { display: flex; align-items: center; gap: 10px; margin-top: 2px; }
+  .lock-icon { font-size: 12px; color: var(--text-tertiary); }
+
+  /* Info box */
+  .info-box { display: flex; gap: 12px; padding: 16px; border-radius: 12px; background: rgba(79,140,255,0.05); border: 1px solid rgba(79,140,255,0.2); }
+  .info-box-icon { font-size: 20px; flex-shrink: 0; }
+  .info-box-title { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+  .info-box-body  { font-size: 12px; color: var(--text-secondary); line-height: 1.6; }
+
+  /* Tabs */
+  #page-dashboard, #page-report, #page-features, #page-history { display: none; }
+  #page-dashboard.active, #page-report.active, #page-features.active, #page-history.active { display: block; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark">S</div>
+      <div class="logo-text">
+        <span class="logo-name">Stratify</span>
+        <span class="logo-sub">AI Coach · CS2</span>
+      </div>
+    </div>
+
+    <nav>
+      <div class="nav-label">Menu</div>
+      <div class="nav-item active" onclick="showPage('dashboard', this)">
+        <span class="nav-icon">🏠</span> Dashboard
+      </div>
+      <div class="nav-item" onclick="showPage('report', this)">
+        <span class="nav-icon">📊</span> Relatório
+      </div>
+      <div class="nav-item" onclick="showPage('features', this)">
+        <span class="nav-icon">⚡</span> Features
+      </div>
+      <div class="nav-item" onclick="showPage('history', this)">
+        <span class="nav-icon">🕑</span> Histórico
+      </div>
+      <div class="nav-item" onclick="showPage('dashboard', this)" style="margin-top:auto">
+        <span class="nav-icon">⚙️</span> Configurações
+      </div>
+    </nav>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <main class="main">
+
+    <!-- ===== DASHBOARD ===== -->
+    <div id="page-dashboard" class="active">
+      <div class="content">
+
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Olá, <span class="gradient">FabrizioCS</span> 👋</h1>
+            <p class="page-sub">Master Guardian Elite · 47 partidas analisadas</p>
+          </div>
+          <button class="btn btn-primary">📁 Analisar Demo</button>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+          <div class="card stat-card">
+            <div class="stat-label">Partidas Analisadas <span class="stat-icon">🎮</span></div>
+            <div class="stat-value primary">47</div>
+            <div class="stat-trend up">↑ +3 esta semana</div>
+          </div>
+          <div class="card stat-card">
+            <div class="stat-label">Win Rate (recente) <span class="stat-icon">📈</span></div>
+            <div class="stat-value warning">50%</div>
+            <div class="stat-trend up">↑ Estável</div>
+          </div>
+          <div class="card stat-card">
+            <div class="stat-label">Score Médio <span class="stat-icon">✅</span></div>
+            <div class="stat-value primary">67<span style="font-size:14px;color:var(--text-tertiary)"> /100</span></div>
+            <div class="stat-trend up">↑ +5 pts esta semana</div>
+          </div>
+          <div class="card stat-card">
+            <div class="stat-label">Erros Críticos <span class="stat-icon">⚠️</span></div>
+            <div class="stat-value danger">1</div>
+            <div class="stat-trend down">↓ vs. última partida</div>
+          </div>
+        </div>
+
+        <!-- Main grid -->
+        <div class="main-grid">
+          <!-- Skill bars -->
+          <div class="card skill-section">
+            <div class="section-title">Habilidades</div>
+            <div class="skill-bar-row">
+              <div class="skill-row-label"><span>Aim</span><span>62</span></div>
+              <div class="progress-track"><div class="progress-fill fill-warning" style="width:62%"></div></div>
+            </div>
+            <div class="skill-bar-row">
+              <div class="skill-row-label"><span>Utility</span><span>45</span></div>
+              <div class="progress-track"><div class="progress-fill fill-danger" style="width:45%"></div></div>
+            </div>
+            <div class="skill-bar-row">
+              <div class="skill-row-label"><span>Game Sense</span><span>58</span></div>
+              <div class="progress-track"><div class="progress-fill fill-warning" style="width:58%"></div></div>
+            </div>
+            <div class="skill-bar-row">
+              <div class="skill-row-label"><span>Clutch</span><span>41</span></div>
+              <div class="progress-track"><div class="progress-fill fill-danger" style="width:41%"></div></div>
+            </div>
+            <div class="skill-bar-row">
+              <div class="skill-row-label"><span>Economy</span><span>70</span></div>
+              <div class="progress-track"><div class="progress-fill fill-success" style="width:70%"></div></div>
+            </div>
+            <div class="skill-bar-row">
+              <div class="skill-row-label"><span>Positioning</span><span>53</span></div>
+              <div class="progress-track"><div class="progress-fill fill-warning" style="width:53%"></div></div>
+            </div>
+            <p style="font-size:11px;color:var(--text-tertiary);text-align:center;margin-top:4px">Baseado nas últimas 47 partidas</p>
+          </div>
+
+          <!-- Feedbacks -->
+          <div class="feedback-section card" style="padding:20px;gap:12px;display:flex;flex-direction:column">
+            <div class="section-header">
+              <span class="section-title">Principais Erros Detectados</span>
+              <div class="section-hr"></div>
+              <span class="badge badge-error"><span class="dot" style="background:var(--danger)"></span>Fase 1 MVP</span>
+            </div>
+
+            <div class="feedback-item fb-error">
+              <div class="fb-icon">🎯</div>
+              <div class="fb-body">
+                <div class="fb-header">
+                  <div class="fb-title">Spray fora do alcance em 60% das mortes com rifle</div>
+                  <span class="badge badge-error"><span class="dot" style="background:var(--danger)"></span>Crítico</span>
+                </div>
+                <div class="fb-source">Anti-Noob Detector · Round 12</div>
+                <div class="fb-desc">Em 9 de 15 kills com AK-47, a distância era superior a 750 unidades. AK tem acurácia efetiva até ~500u em burst.</div>
+                <div class="fb-tip"><span class="tip-icon">💡</span><span><strong style="color:var(--primary)">O que fazer: </strong>Use burst de 3-4 tiros em distâncias médias. Para longas, tap shooting (1 tiro por vez).</span></div>
+              </div>
+            </div>
+
+            <div class="feedback-item fb-warning">
+              <div class="fb-icon">🎯</div>
+              <div class="fb-body">
+                <div class="fb-header">
+                  <div class="fb-title">Crosshair consistentemente baixo — 71% dos duelos</div>
+                  <span class="badge badge-warning"><span class="dot" style="background:var(--warning)"></span>Atenção</span>
+                </div>
+                <div class="fb-source">Crosshair Coach · Round 7</div>
+                <div class="fb-desc">Mira estava abaixo da cintura em 71% das entradas. Gera flick adicional de ~13°, equivalente a ~80ms de desvantagem.</div>
+                <div class="fb-tip"><span class="tip-icon">💡</span><span><strong style="color:var(--primary)">O que fazer: </strong>Mantenha crosshair na altura da cabeça ao aproximar-se de ângulos. Pratique no Aim Botz.</span></div>
+              </div>
+            </div>
+
+            <div class="feedback-item fb-warning">
+              <div class="fb-icon">💰</div>
+              <div class="fb-body">
+                <div class="fb-header">
+                  <div class="fb-title">Mortes sem utilidade em 4 rounds</div>
+                  <span class="badge badge-warning"><span class="dot" style="background:var(--warning)"></span>Atenção</span>
+                </div>
+                <div class="fb-source">Anti-Noob Detector · Round 15</div>
+                <div class="fb-desc">Em 4 rounds você morreu com smokes ou flashes intactos no inventário.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Match history table -->
+        <div class="match-table-section">
+          <div class="section-header">
+            <span class="section-title">Partidas Recentes</span>
+            <div class="section-hr"></div>
+            <span style="font-size:12px;color:var(--primary);cursor:pointer">Ver todas →</span>
+          </div>
+          <div class="card">
+            <table>
+              <thead>
+                <tr>
+                  <th>Resultado</th><th>Mapa</th><th>Score</th><th>Placar</th><th>Duração</th><th>Quando</th><th>Erros</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="badge badge-error">Derrota</span></td>
+                  <td><span class="map-name">DUST2</span></td>
+                  <td><span class="map-score-val danger" style="color:var(--danger)">62</span></td>
+                  <td class="text-muted">11 — 16</td>
+                  <td class="text-tertiary">64m</td>
+                  <td class="text-tertiary">1h atrás</td>
+                  <td style="color:var(--warning);font-weight:600">5</td>
+                </tr>
+                <tr>
+                  <td><span class="badge badge-success">Vitória</span></td>
+                  <td><span class="map-name">INFERNO</span></td>
+                  <td><span class="map-score-val" style="color:var(--success)">74</span></td>
+                  <td class="text-muted">16 — 13</td>
+                  <td class="text-tertiary">70m</td>
+                  <td class="text-tertiary">1d atrás</td>
+                  <td style="color:var(--warning);font-weight:600">3</td>
+                </tr>
+                <tr>
+                  <td><span class="badge badge-success">Vitória</span></td>
+                  <td><span class="map-name">MIRAGE</span></td>
+                  <td><span class="map-score-val" style="color:var(--success)">81</span></td>
+                  <td class="text-muted">16 — 8</td>
+                  <td class="text-tertiary">60m</td>
+                  <td class="text-tertiary">2d atrás</td>
+                  <td style="color:var(--success);font-weight:600">2</td>
+                </tr>
+                <tr>
+                  <td><span class="badge badge-error">Derrota</span></td>
+                  <td><span class="map-name">NUKE</span></td>
+                  <td><span class="map-score-val" style="color:var(--danger)">45</span></td>
+                  <td class="text-muted">9 — 16</td>
+                  <td class="text-tertiary">75m</td>
+                  <td class="text-tertiary">3d atrás</td>
+                  <td style="color:var(--danger);font-weight:600">7</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </div><!-- /dashboard -->
+
+    <!-- ===== REPORT PAGE ===== -->
+    <div id="page-report">
+      <div class="content">
+
+        <div class="page-header">
+          <div>
+            <h1 class="page-title" style="font-size:22px">Relatório da Partida</h1>
+            <p class="page-sub">DUST2 · Competitive · 14 abr. 2026</p>
+          </div>
+          <span class="badge badge-error">Derrota 11–16</span>
+        </div>
+
+        <!-- Summary stats -->
+        <div class="stats-grid">
+          <!-- Score ring via SVG -->
+          <div class="card" style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;gap:6px">
+            <svg width="100" height="100" style="transform:rotate(-90deg)">
+              <circle cx="50" cy="50" r="40" fill="none" stroke="#1A2233" stroke-width="8"/>
+              <circle cx="50" cy="50" r="40" fill="none" stroke="#F59E0B" stroke-width="8"
+                stroke-linecap="round"
+                stroke-dasharray="156 251"
+                style="filter:drop-shadow(0 0 6px rgba(245,158,11,0.4));transition:stroke-dasharray 1s ease-out"/>
+            </svg>
+            <div style="position:relative;margin-top:-80px;text-align:center;z-index:2">
+              <div style="font-size:26px;font-weight:700;color:var(--warning);font-variant-numeric:tabular-nums">62</div>
+              <div style="font-size:10px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.08em">Score</div>
+            </div>
+            <div style="margin-top:40px;font-size:11px;color:var(--text-tertiary)">Desempenho Geral</div>
+          </div>
+          <div class="card stat-card">
+            <div class="stat-label">Erros Críticos <span>🔴</span></div>
+            <div class="stat-value danger">1</div>
+            <div class="stat-trend down">↓ vs. média</div>
+          </div>
+          <div class="card stat-card">
+            <div class="stat-label">Avisos <span>🟡</span></div>
+            <div class="stat-value warning">3</div>
+          </div>
+          <div class="card stat-card">
+            <div class="stat-label">Feedbacks Gerados <span>📊</span></div>
+            <div class="stat-value primary">5</div>
+          </div>
+        </div>
+
+        <!-- Focus areas -->
+        <div class="card" style="padding:14px 16px;display:flex;align-items:center;gap:16px">
+          <span style="font-size:12px;color:var(--text-tertiary);white-space:nowrap">Focar nesta semana:</span>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <span class="badge badge-info">Crosshair placement</span>
+            <span class="badge badge-info">Spray control</span>
+            <span class="badge badge-info">Utility usage</span>
+          </div>
+        </div>
+
+        <!-- Metrics grid -->
+        <div class="metrics-grid">
+          <!-- Crosshair metrics -->
+          <div class="card metric-card">
+            <div class="metric-header">🎯 <span class="section-title">Métricas — Crosshair Coach</span></div>
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <div class="skill-bar-row">
+                <div class="skill-row-label"><span>Mira na altura correta</span><span style="color:var(--danger)">29</span></div>
+                <div class="progress-track"><div class="progress-fill fill-danger" style="width:29%"></div></div>
+              </div>
+              <div class="skill-bar-row">
+                <div class="skill-row-label"><span>Pre-aim em ângulos</span><span style="color:var(--warning)">42</span></div>
+                <div class="progress-track"><div class="progress-fill fill-warning" style="width:42%"></div></div>
+              </div>
+              <div class="skill-bar-row">
+                <div class="skill-row-label"><span>Headshots obtidos</span><span style="color:var(--warning)">38</span></div>
+                <div class="progress-track"><div class="progress-fill fill-warning" style="width:38%"></div></div>
+              </div>
+              <div class="skill-bar-row">
+                <div class="skill-row-label"><span>Duelos com flick</span><span style="color:var(--danger)">71</span></div>
+                <div class="progress-track"><div class="progress-fill fill-danger" style="width:71%"></div></div>
+              </div>
+            </div>
+            <div style="display:flex;gap:8px;padding:10px;background:rgba(79,140,255,0.06);border:1px solid rgba(79,140,255,0.15);border-radius:8px;font-size:11px;color:var(--text-secondary)">
+              <span style="color:var(--primary)">ℹ️</span> Ideal: mira na altura correta em &gt;60% das entradas.
+            </div>
+          </div>
+
+          <!-- Anti-noob patterns -->
+          <div class="card metric-card">
+            <div class="metric-header">🚫 <span class="section-title">Padrões — Anti-Noob Detector</span></div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div class="pattern-row">
+                <div class="pattern-emoji">🔄</div>
+                <div class="pattern-label">Reloads em posição exposta</div>
+                <div class="pattern-count" style="color:var(--warning)">6x</div>
+                <span class="badge badge-warning">Atenção</span>
+              </div>
+              <div class="pattern-row">
+                <div class="pattern-emoji">💀</div>
+                <div class="pattern-label">Mortes com util intacta</div>
+                <div class="pattern-count" style="color:var(--warning)">4x</div>
+                <span class="badge badge-warning">Atenção</span>
+              </div>
+              <div class="pattern-row">
+                <div class="pattern-emoji">🔫</div>
+                <div class="pattern-label">Spray fora do alcance</div>
+                <div class="pattern-count" style="color:var(--danger)">9x</div>
+                <span class="badge badge-error">Crítico</span>
+              </div>
+              <div class="pattern-row">
+                <div class="pattern-emoji">✅</div>
+                <div class="pattern-label">Bursts curtos em distância</div>
+                <div class="pattern-count" style="color:var(--success)">3x</div>
+                <span class="badge badge-success">Ótimo</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Detailed feedbacks -->
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <span class="section-title">Feedbacks Detalhados</span>
+
+          <div class="card analyzer-section">
+            <div class="analyzer-header">
+              <span style="font-size:20px">🚫</span>
+              <span class="analyzer-title">Anti-Noob Detector</span>
+              <span class="badge badge-error"><span class="dot" style="background:var(--danger)"></span>1 crítico</span>
+              <span class="badge badge-warning"><span class="dot" style="background:var(--warning)"></span>2 atenções</span>
+              <span class="analyzer-chevron">▲</span>
+            </div>
+            <div class="analyzer-body">
+              <div class="feedback-item fb-error">
+                <div class="fb-icon">🔫</div>
+                <div class="fb-body">
+                  <div class="fb-header">
+                    <div class="fb-title">Spray fora do alcance em 60% das mortes com rifle</div>
+                    <span class="badge badge-error"><span class="dot" style="background:var(--danger)"></span>Crítico</span>
+                  </div>
+                  <div class="fb-source">Anti-Noob Detector · Round 12 · 91% confiança</div>
+                  <div class="fb-desc">Em 9 de 15 kills com AK-47, a distância era superior a 750 unidades. AK tem acurácia efetiva até ~500u em burst, ~300u em spray.</div>
+                  <div class="fb-tip"><span class="tip-icon">💡</span><span><strong style="color:var(--primary)">O que fazer: </strong>Use burst de 3-4 tiros em distâncias médias. Para distâncias longas, tap shooting (1 tiro por vez).</span></div>
+                  <div class="confidence">
+                    <div class="conf-bar"><div class="conf-fill" style="width:91%"></div></div>
+                    <span style="font-size:11px;color:var(--text-tertiary)">91% confiança</span>
+                  </div>
+                </div>
+              </div>
+              <div class="feedback-item fb-warning">
+                <div class="fb-icon">💰</div>
+                <div class="fb-body">
+                  <div class="fb-header">
+                    <div class="fb-title">Mortes sem utilidade em 4 rounds</div>
+                    <span class="badge badge-warning"><span class="dot" style="background:var(--warning)"></span>Atenção</span>
+                  </div>
+                  <div class="fb-source">Anti-Noob Detector · Round 15 · 85% confiança</div>
+                  <div class="fb-desc">Em 4 rounds você morreu com smokes ou flashes intactos no inventário. Utilitários não usados em uma morte = dinheiro jogado fora.</div>
+                  <div class="fb-tip"><span class="tip-icon">💡</span><span><strong style="color:var(--primary)">O que fazer: </strong>Antes de pecar em posição arriscada, sempre use utilidade defensiva. Utilitário salvo em derrota é prejuízo.</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card analyzer-section">
+            <div class="analyzer-header">
+              <span style="font-size:20px">🎯</span>
+              <span class="analyzer-title">Crosshair Coach</span>
+              <span class="badge badge-warning"><span class="dot" style="background:var(--warning)"></span>1 atenção</span>
+              <span class="badge badge-success"><span class="dot" style="background:var(--success)"></span>1 ótimo</span>
+              <span class="analyzer-chevron">▲</span>
+            </div>
+            <div class="analyzer-body">
+              <div class="feedback-item fb-warning">
+                <div class="fb-icon">🎯</div>
+                <div class="fb-body">
+                  <div class="fb-header">
+                    <div class="fb-title">Crosshair consistentemente baixo — 71% dos duelos</div>
+                    <span class="badge badge-warning"><span class="dot" style="background:var(--warning)"></span>Atenção</span>
+                  </div>
+                  <div class="fb-source">Crosshair Coach · Round 7 · 88% confiança</div>
+                  <div class="fb-desc">Sua mira estava abaixo da cintura em 71% das entradas em ângulo nesta partida. Isso gera um flick adicional médio de ~13°, equivalente a ~80ms de desvantagem.</div>
+                  <div class="fb-tip"><span class="tip-icon">💡</span><span><strong style="color:var(--primary)">O que fazer: </strong>Mantenha a crosshair na altura da cabeça ao aproximar-se de ângulos conhecidos. Pratique no mapa "Aim Botz" focando em pre-aim.</span></div>
+                </div>
+              </div>
+              <div class="feedback-item fb-success">
+                <div class="fb-icon">✅</div>
+                <div class="fb-body">
+                  <div class="fb-header">
+                    <div class="fb-title">Pre-aim correto em 3 situações de rotina</div>
+                    <span class="badge badge-success"><span class="dot" style="background:var(--success)"></span>Ótimo</span>
+                  </div>
+                  <div class="fb-source">Crosshair Coach · Round 18 · 79% confiança</div>
+                  <div class="fb-desc">Em 3 entradas no A Site você manteve a crosshair na altura exata da cabeça antes de ver o oponente.</div>
+                  <div class="fb-tip"><span class="tip-icon">💡</span><span><strong style="color:var(--success)">Continue! </strong>Expanda esse hábito para os ângulos de B Site.</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div><!-- /report -->
+
+    <!-- ===== FEATURES PAGE ===== -->
+    <div id="page-features">
+      <div class="content" style="max-width:800px">
+
+        <div class="page-header">
+          <div>
+            <h1 class="page-title" style="font-size:22px">Configurar Features</h1>
+            <p class="page-sub">Ative ou desative analyzers. Cada feature é um worker independente.</p>
+          </div>
+          <div class="card" style="padding:8px 16px;display:flex;align-items:center;gap:8px">
+            <span style="color:var(--success)">●</span>
+            <span style="font-size:12px;color:var(--text-secondary)"><strong style="color:var(--text-primary)">2</strong> ativas</span>
+          </div>
+        </div>
+
+        <!-- Phase 1 -->
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div class="section-header">
+            <span class="section-title">Fase 1 — MVP</span>
+            <div class="section-hr"></div>
+            <span style="font-size:11px;color:var(--text-tertiary)">Disponível agora</span>
+          </div>
+
+          <div class="feature-card enabled">
+            <div class="feature-icon">🚫</div>
+            <div class="feature-info">
+              <div class="feature-name-row">
+                <span class="feature-name">Anti-Noob Detector</span>
+                <span class="badge badge-success">Fase 1</span>
+              </div>
+              <div class="feature-desc">Detecta erros recorrentes: reload ruim, morte sem util, spray fora do alcance</div>
+            </div>
+            <div class="feature-ctrl">
+              <div class="toggle-track on"><div class="toggle-thumb"></div></div>
+            </div>
+          </div>
+
+          <div class="feature-card enabled">
+            <div class="feature-icon">🎯</div>
+            <div class="feature-info">
+              <div class="feature-name-row">
+                <span class="feature-name">Crosshair Coach</span>
+                <span class="badge badge-success">Fase 1</span>
+              </div>
+              <div class="feature-desc">Analisa posicionamento da mira e alerta sobre crosshair baixo</div>
+            </div>
+            <div class="feature-ctrl">
+              <div class="toggle-track on"><div class="toggle-thumb"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phase 2 -->
+        <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px">
+          <div class="section-header">
+            <span class="section-title">Fase 2 — Análise Avançada</span>
+            <div class="section-hr"></div>
+            <span style="font-size:11px;color:var(--text-tertiary)">Em desenvolvimento</span>
+          </div>
+
+          <div class="feature-card locked">
+            <div class="feature-icon">💣</div>
+            <div class="feature-info">
+              <div class="feature-name-row">
+                <span class="feature-name">Utility Coach</span>
+                <span class="badge badge-info">Fase 2</span>
+                <span class="badge badge-neutral">Em breve</span>
+              </div>
+              <div class="feature-desc">Analisa efetividade de smokes, flashes e molotovs</div>
+            </div>
+            <div class="feature-ctrl">
+              <span class="lock-icon">🔒</span>
+              <div class="toggle-track off"><div class="toggle-thumb"></div></div>
+            </div>
+          </div>
+
+          <div class="feature-card locked">
+            <div class="feature-icon">🧠</div>
+            <div class="feature-info">
+              <div class="feature-name-row">
+                <span class="feature-name">Round IQ Analyzer</span>
+                <span class="badge badge-info">Fase 2</span>
+                <span class="badge badge-neutral">Em breve</span>
+              </div>
+              <div class="feature-desc">Avalia qualidade das decisões táticas por round</div>
+            </div>
+            <div class="feature-ctrl">
+              <span class="lock-icon">🔒</span>
+              <div class="toggle-track off"><div class="toggle-thumb"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-box" style="margin-top:8px">
+          <div class="info-box-icon">ℹ️</div>
+          <div>
+            <div class="info-box-title">Cada feature é independente</div>
+            <div class="info-box-body">Features desativadas não consomem recursos. O backend processa apenas os eventos das features ativas. Isso é garantido pela arquitetura event-driven — cada analyzer é um worker autônomo no Python Analysis Engine.</div>
+          </div>
+        </div>
+
+      </div>
+    </div><!-- /features -->
+
+    <!-- ===== HISTORY PAGE ===== -->
+    <div id="page-history">
+      <div class="content" style="max-width:900px">
+
+        <div class="page-header">
+          <div>
+            <h1 class="page-title" style="font-size:22px">Histórico de Partidas</h1>
+            <p class="page-sub">4 partidas analisadas</p>
+          </div>
+          <div style="display:flex;gap:2px;padding:3px;background:var(--surface);border:1px solid var(--border-subtle);border-radius:8px">
+            <div style="padding:5px 14px;border-radius:6px;font-size:12px;cursor:pointer;background:var(--surface-raised);color:var(--text-primary)">Todas</div>
+            <div style="padding:5px 14px;border-radius:6px;font-size:12px;cursor:pointer;color:var(--text-tertiary)">Vitórias</div>
+            <div style="padding:5px 14px;border-radius:6px;font-size:12px;cursor:pointer;color:var(--text-tertiary)">Derrotas</div>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <!-- Match cards -->
+          <div class="card" style="display:flex;align-items:center;gap:16px;padding:16px;cursor:pointer;transition:all 0.2s" onmouseover="this.style.borderColor='var(--border)'" onmouseout="this.style.borderColor='var(--border-subtle)'">
+            <div style="width:4px;height:40px;border-radius:100px;background:var(--danger);flex-shrink:0"></div>
+            <div style="width:96px;flex-shrink:0"><div style="font-size:15px;font-weight:700">DUST2</div><div style="font-size:11px;color:var(--text-tertiary)">Competitive</div></div>
+            <div style="flex:1"><span class="badge badge-error">Derrota</span> <span style="font-size:13px;color:var(--text-secondary);margin-left:8px">11 — 16</span></div>
+            <div style="text-align:center;width:64px"><div style="font-size:20px;font-weight:700;color:var(--danger);font-variant-numeric:tabular-nums">62</div><div style="font-size:10px;color:var(--text-tertiary)">SCORE</div></div>
+            <div style="text-align:center;width:64px"><div style="font-size:18px;font-weight:600;color:var(--warning)">5</div><div style="font-size:10px;color:var(--text-tertiary)">ERROS</div></div>
+            <div style="text-align:right;width:96px"><div style="font-size:12px;color:var(--text-secondary)">64m</div><div style="font-size:11px;color:var(--text-tertiary)">1h atrás</div></div>
+          </div>
+          <div class="card" style="display:flex;align-items:center;gap:16px;padding:16px;cursor:pointer;transition:all 0.2s" onmouseover="this.style.borderColor='var(--border)'" onmouseout="this.style.borderColor='var(--border-subtle)'">
+            <div style="width:4px;height:40px;border-radius:100px;background:var(--success);flex-shrink:0"></div>
+            <div style="width:96px;flex-shrink:0"><div style="font-size:15px;font-weight:700">INFERNO</div><div style="font-size:11px;color:var(--text-tertiary)">Competitive</div></div>
+            <div style="flex:1"><span class="badge badge-success">Vitória</span> <span style="font-size:13px;color:var(--text-secondary);margin-left:8px">16 — 13</span></div>
+            <div style="text-align:center;width:64px"><div style="font-size:20px;font-weight:700;color:var(--success);font-variant-numeric:tabular-nums">74</div><div style="font-size:10px;color:var(--text-tertiary)">SCORE</div></div>
+            <div style="text-align:center;width:64px"><div style="font-size:18px;font-weight:600;color:var(--warning)">3</div><div style="font-size:10px;color:var(--text-tertiary)">ERROS</div></div>
+            <div style="text-align:right;width:96px"><div style="font-size:12px;color:var(--text-secondary)">70m</div><div style="font-size:11px;color:var(--text-tertiary)">1d atrás</div></div>
+          </div>
+          <div class="card" style="display:flex;align-items:center;gap:16px;padding:16px;cursor:pointer;transition:all 0.2s">
+            <div style="width:4px;height:40px;border-radius:100px;background:var(--success);flex-shrink:0"></div>
+            <div style="width:96px;flex-shrink:0"><div style="font-size:15px;font-weight:700">MIRAGE</div><div style="font-size:11px;color:var(--text-tertiary)">Competitive</div></div>
+            <div style="flex:1"><span class="badge badge-success">Vitória</span> <span style="font-size:13px;color:var(--text-secondary);margin-left:8px">16 — 8</span></div>
+            <div style="text-align:center;width:64px"><div style="font-size:20px;font-weight:700;color:var(--success)">81</div><div style="font-size:10px;color:var(--text-tertiary)">SCORE</div></div>
+            <div style="text-align:center;width:64px"><div style="font-size:18px;font-weight:600;color:var(--success)">2</div><div style="font-size:10px;color:var(--text-tertiary)">ERROS</div></div>
+            <div style="text-align:right;width:96px"><div style="font-size:12px;color:var(--text-secondary)">60m</div><div style="font-size:11px;color:var(--text-tertiary)">2d atrás</div></div>
+          </div>
+          <div class="card" style="display:flex;align-items:center;gap:16px;padding:16px;cursor:pointer;transition:all 0.2s">
+            <div style="width:4px;height:40px;border-radius:100px;background:var(--danger);flex-shrink:0"></div>
+            <div style="width:96px;flex-shrink:0"><div style="font-size:15px;font-weight:700">NUKE</div><div style="font-size:11px;color:var(--text-tertiary)">Competitive</div></div>
+            <div style="flex:1"><span class="badge badge-error">Derrota</span> <span style="font-size:13px;color:var(--text-secondary);margin-left:8px">9 — 16</span></div>
+            <div style="text-align:center;width:64px"><div style="font-size:20px;font-weight:700;color:var(--danger)">45</div><div style="font-size:10px;color:var(--text-tertiary)">SCORE</div></div>
+            <div style="text-align:center;width:64px"><div style="font-size:18px;font-weight:600;color:var(--danger)">7</div><div style="font-size:10px;color:var(--text-tertiary)">ERROS</div></div>
+            <div style="text-align:right;width:96px"><div style="font-size:12px;color:var(--text-secondary)">75m</div><div style="font-size:11px;color:var(--text-tertiary)">3d atrás</div></div>
+          </div>
+        </div>
+
+      </div>
+    </div><!-- /history -->
+
+  </main>
+</div>
+
+<script>
+function showPage(page, el) {
+  document.querySelectorAll('[id^="page-"]').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  el.classList.add('active');
+}
+</script>
+</body>
+</html>
