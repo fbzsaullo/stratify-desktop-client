@@ -1,0 +1,265 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ================================================================
+   STRATIFY GLOBAL STYLES
+   Design System: Dark-first, Gamer + Professional
+   ================================================================ */
+
+@layer base {
+  :root {
+    --color-bg-primary: #0B0F14;
+    --color-bg-secondary: #0F1419;
+    --color-surface: #121821;
+    --color-surface-raised: #1A2233;
+    --color-border-subtle: #1E2A3A;
+    --color-border: #243044;
+    --sidebar-width: 220px;
+    --titlebar-height: 0px; /* Tauri frameless */
+  }
+
+  * {
+    @apply border-border-subtle;
+    box-sizing: border-box;
+  }
+
+  html {
+    @apply bg-bg-primary text-text-primary;
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: "cv11", "salt", "ss01", "ss03";
+    /* Disable text selection globally (desktop app feel) */
+    user-select: none;
+  }
+
+  body {
+    @apply bg-bg-primary overflow-hidden;
+    height: 100vh;
+    width: 100vw;
+  }
+
+  #root {
+    @apply h-full w-full;
+  }
+
+  /* Allow selection in inputs and readable content */
+  input, textarea, [data-selectable] {
+    user-select: text;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-border rounded-full;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-border-strong;
+  }
+}
+
+/* ================================================================
+   COMPONENT LAYER — Reusable base classes
+   ================================================================ */
+
+@layer components {
+  /* === CARD === */
+  .card {
+    @apply bg-surface border border-border-subtle rounded-card shadow-card
+           transition-all duration-200;
+  }
+
+  .card-hover {
+    @apply hover:shadow-card-hover hover:border-border cursor-pointer;
+  }
+
+  /* === BUTTONS === */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2 rounded-btn
+           font-medium text-sm transition-all duration-150 focus:outline-none
+           focus-visible:ring-2 focus-visible:ring-primary/50 disabled:opacity-40
+           disabled:cursor-not-allowed select-none;
+  }
+
+  .btn-primary {
+    @apply btn bg-primary text-white hover:bg-primary-hover active:bg-primary-active
+           shadow-sm hover:shadow-glow-primary;
+  }
+
+  .btn-secondary {
+    @apply btn bg-surface-raised text-text-primary border border-border
+           hover:bg-surface-overlay hover:border-border-strong;
+  }
+
+  .btn-ghost {
+    @apply btn text-text-secondary hover:text-text-primary hover:bg-surface-raised;
+  }
+
+  .btn-danger {
+    @apply btn bg-danger/10 text-danger border border-danger/30
+           hover:bg-danger/20 hover:border-danger/50;
+  }
+
+  .btn-success {
+    @apply btn bg-success/10 text-success border border-success/30
+           hover:bg-success/20 hover:border-success/50;
+  }
+
+  .btn-sm {
+    @apply px-3 py-1.5 text-caption;
+  }
+
+  .btn-lg {
+    @apply px-6 py-3 text-subtitle;
+  }
+
+  .btn-icon {
+    @apply btn p-2 rounded-btn;
+  }
+
+  /* === BADGE === */
+  .badge {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-badge
+           text-caption-xs font-medium tracking-wide uppercase;
+  }
+
+  .badge-error {
+    @apply badge bg-danger/15 text-danger border border-danger/25;
+  }
+
+  .badge-warning {
+    @apply badge bg-warning/15 text-warning border border-warning/25;
+  }
+
+  .badge-success {
+    @apply badge bg-success/15 text-success border border-success/25;
+  }
+
+  .badge-info {
+    @apply badge bg-primary/15 text-primary border border-primary/25;
+  }
+
+  .badge-neutral {
+    @apply badge bg-surface-raised text-text-secondary border border-border;
+  }
+
+  /* === TOGGLE === */
+  .toggle-track {
+    @apply relative w-11 h-6 rounded-full transition-all duration-200 cursor-pointer
+           focus-visible:ring-2 focus-visible:ring-primary/50;
+  }
+
+  .toggle-thumb {
+    @apply absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-sm
+           transition-transform duration-200;
+  }
+
+  /* === DIVIDER === */
+  .divider {
+    @apply border-t border-border-subtle;
+  }
+
+  /* === STAT CARD === */
+  .stat-card {
+    @apply card p-4 flex flex-col gap-1;
+  }
+
+  .stat-value {
+    @apply text-title-lg text-text-primary font-bold tabular-nums animate-count-up;
+  }
+
+  .stat-label {
+    @apply text-caption text-text-secondary;
+  }
+
+  /* === SECTION TITLE === */
+  .section-title {
+    @apply text-caption-xs text-text-tertiary font-medium tracking-widest uppercase;
+  }
+
+  /* === SEVERITY INDICATOR === */
+  .severity-dot {
+    @apply w-2 h-2 rounded-full flex-shrink-0;
+  }
+
+  /* === SIDEBAR NAV ITEM === */
+  .nav-item {
+    @apply flex items-center gap-3 px-3 py-2.5 rounded-btn text-sm font-medium
+           text-text-secondary transition-all duration-150 cursor-pointer
+           hover:text-text-primary hover:bg-surface-raised;
+  }
+
+  .nav-item-active {
+    @apply text-primary bg-primary/10 border border-primary/20
+           hover:text-primary hover:bg-primary/15;
+  }
+
+  /* === PROGRESS BAR === */
+  .progress-bar {
+    @apply h-1.5 rounded-full bg-surface-overlay overflow-hidden;
+  }
+
+  .progress-fill {
+    @apply h-full rounded-full transition-all duration-700 ease-out;
+  }
+
+  /* === FEEDBACK ITEM === */
+  .feedback-item {
+    @apply card p-4 flex gap-3 animate-slide-up;
+  }
+}
+
+/* ================================================================
+   UTILITY LAYER
+   ================================================================ */
+
+@layer utilities {
+  .text-gradient-primary {
+    @apply bg-gradient-primary bg-clip-text text-transparent;
+  }
+
+  .glow-text-primary {
+    text-shadow: 0 0 20px rgba(79, 140, 255, 0.6);
+  }
+
+  .glow-text-success {
+    text-shadow: 0 0 16px rgba(34, 197, 94, 0.5);
+  }
+
+  .glow-text-danger {
+    text-shadow: 0 0 16px rgba(239, 68, 68, 0.5);
+  }
+
+  .tabular {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+  }
+
+  /* Shimmer loading state */
+  .skeleton {
+    @apply bg-surface-raised rounded animate-shimmer;
+    background-size: 200% 100%;
+    background-image: linear-gradient(
+      90deg,
+      #1a2233 0%,
+      #243044 50%,
+      #1a2233 100%
+    );
+  }
+
+  /* Drag region for Tauri frameless window */
+  .drag-region {
+    -webkit-app-region: drag;
+  }
+
+  .no-drag {
+    -webkit-app-region: no-drag;
+  }
+}
