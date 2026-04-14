@@ -1,0 +1,18 @@
+STRATIFY AI COACH - TERMS OF USE
+
+1. ACCEPTANCE OF TERMS
+By installing Stratify AI Coach, you agree to be bound by these terms.
+
+2. LICENSE
+We grant you a personal, non-exclusive license to use the software for personal pro-gaming coaching purposes.
+
+3. RESTRICTIONS
+You may not reverse engineer, decompile, or attempt to extract the source code of the analysis engine.
+
+4. PRIVACY
+We collect game data to provide AI coaching. For more details, see our Privacy Policy at stratify.ai/privacy.
+
+5. DISCLAIMER
+The software is provided "as is". We are not responsible for any VAC bans or game-related penalties, although our analysis is non-invasive and follows fair-play guidelines.
+
+Stratify Team 2026.
