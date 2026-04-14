@@ -40,7 +40,8 @@ export function Sidebar() {
         {!sidebarCollapsed && (
           <div className="flex flex-col min-w-0">
             <span className="text-subtitle font-bold text-text-primary leading-none">Stratify</span>
-            <span className="text-caption-xs text-text-tertiary">AI Coach · v0.0.5-logo-build-fix</span>
+            <span className="text-subtitle font-bold text-text-primary leading-none">Stratify</span>
+            <span className="text-caption-xs text-text-tertiary">AI Coach · v0.0.8-tray-added</span>
           </div>
         )}
       </div>
@@ -84,6 +85,14 @@ export function Sidebar() {
           />
           {!sidebarCollapsed && <span className="text-caption">Colapsar</span>}
         </button>
+
+        {/* Small branding watermark */}
+        {!sidebarCollapsed && (
+          <div className="mt-2 text-center opacity-20 pointer-events-none grayscale flex items-center justify-center gap-1.5 px-2">
+            <img src="/logo.png" alt="" className="w-3 h-3" />
+            <span className="text-[10px] font-bold tracking-widest text-text-tertiary uppercase">Stratify</span>
+          </div>
+        )}
       </div>
     </aside>
   )
