@@ -61,7 +61,7 @@ export function SettingsPage() {
       {/* Audio Section */}
       <section className="space-y-6">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center text-orange-500">
+          <div className="w-10 h-10 rounded-xl bg-warning/10 flex items-center justify-center text-warning">
             <Volume2 size={24} />
           </div>
           <div>
@@ -81,7 +81,7 @@ export function SettingsPage() {
               </label>
               <button 
                 onClick={refreshDevices}
-                className={clsx("p-1 text-text-tertiary hover:text-brand-primary transition-colors", isRefreshing && "animate-spin")}
+                className={clsx("p-1 text-text-tertiary hover:text-primary transition-colors", isRefreshing && "animate-spin")}
               >
                 <RefreshCw size={14} />
               </button>
@@ -90,7 +90,7 @@ export function SettingsPage() {
             <select
               value={audioSettings.outputDeviceId}
               onChange={(e) => setAudioDevice(e.target.value)}
-              className="w-full bg-bg-secondary border border-border-subtle rounded-lg px-3 py-2 text-body text-text-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20 transition-all cursor-pointer"
+              className="w-full bg-bg-secondary border border-border-subtle rounded-lg px-3 py-2 text-body text-text-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all cursor-pointer"
             >
               <option value="default">Padrão do Sistema</option>
               {devices.map(device => (
@@ -118,7 +118,7 @@ export function SettingsPage() {
                 max="100"
                 value={audioSettings.volume}
                 onChange={(e) => setAudioVolume(parseInt(e.target.value))}
-                className="flex-1 accent-brand-primary cursor-pointer h-1.5 bg-bg-secondary rounded-lg appearance-none"
+                className="flex-1 accent-primary cursor-pointer h-1.5 bg-bg-secondary rounded-lg appearance-none"
               />
               <span className="text-subtitle font-mono text-text-primary w-8 text-right">
                 {audioSettings.volume}%
@@ -127,7 +127,7 @@ export function SettingsPage() {
 
             <button
               onClick={handleTestSound}
-              className="flex items-center justify-center gap-2 w-full py-2 bg-brand-primary/10 text-brand-primary rounded-lg font-semibold hover:bg-brand-primary/20 transition-all border border-brand-primary/20"
+              className="flex items-center justify-center gap-2 w-full py-2 bg-primary/10 text-primary rounded-lg font-semibold hover:bg-primary/20 transition-all border border-primary/20"
             >
               <Play size={16} fill="currentColor" />
               Testar Áudio

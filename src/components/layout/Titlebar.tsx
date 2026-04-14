@@ -15,7 +15,7 @@ export function Titlebar() {
     <div 
       data-tauri-drag-region
       className={clsx(
-        "h-8 flex items-center justify-between bg-bg-primary border-b border-border-subtle select-none",
+        "h-8 flex items-center justify-between bg-surface/80 backdrop-blur-md border-b border-border-subtle select-none",
         "fixed top-0 left-0 right-0 z-50 px-4"
       )}
     >
