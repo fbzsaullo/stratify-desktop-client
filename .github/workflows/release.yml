@@ -41,8 +41,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tagName: v__VERSION__ # the package.json version will be used
-          releaseName: "Stratify v__VERSION__"
+          tagName: ${{ github.ref_name }}
+          releaseName: "Stratify ${{ github.ref_name }}"
           releaseBody: "See the assets to download this version and install."
           releaseDraft: false
           prerelease: false
