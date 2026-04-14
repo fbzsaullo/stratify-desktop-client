@@ -12,7 +12,13 @@
   },
   "tauri": {
     "allowlist": {
-      "all": false
+      "all": false,
+      "window": {
+        "all": false,
+        "close": true,
+        "minimize": true,
+        "startDragging": true
+      }
     },
     "bundle": {
       "active": true,
@@ -56,12 +62,12 @@
     "windows": [
       {
         "fullscreen": false,
-        "resizable": true,
+        "resizable": false,
         "title": "Stratify AI Coach",
         "width": 1280,
         "height": 800,
-        "minWidth": 1024,
-        "minHeight": 720,
+        "minWidth": 1280,
+        "minHeight": 800,
         "decorations": false
       }
     ]
