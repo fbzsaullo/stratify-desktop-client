@@ -16,11 +16,11 @@ Construído com **Tauri (Rust)** + **React/TypeScript**.
 
 ## Funcionalidades
 
-- **Player Dashboard**: Skill Radar, histórico de partidas, feedbacks
-- **Demo Analyzer**: Drag & drop de arquivo `.dem` → análise automática
-- **Live Overlay HUD**: HUD semitransparente durante partidas ativas
-- **AI Voice Coach**: Motor de voz integrado para coaching por áudio em tempo real
-- **Session Review**: Review de rounds com feedbacks anotados por tick
+- **Premium Frameless UI**: Interface customizável sem bordas nativas, com efeitos de glassmorphism e design system moderno.
+- **AI Voice Coach (TTS)**: Motor de voz IA integrado para coaching por áudio com configurações persistentes de volume e dispositivo.
+- **Live Overlay HUD**: HUD semitransparente que se sobrepõe ao jogo automaticamente.
+- **Session Review**: Histórico detalhado de performance com gráficos dinâmicos.
+- **Automated CI/CD**: Sistema de release com geração automática de instaladores e rollback em caso de falha.
 
 ## 🚀 Guia de Início Rápido (Setup)
 
@@ -106,24 +106,35 @@ npm run tauri build
 ```
 stratify-desktop-client/
 ├── src/                     # React frontend
+│   ├── assets/              # Logos e ícones internos
 │   ├── components/
-│   │   ├── Dashboard/
-│   │   ├── MatchHistory/
-│   │   ├── FeedbackCard/
-│   │   └── Overlay/
-│   ├── pages/
-│   ├── stores/              # Zustand stores
-│   └── api/                 # Core Backend API client
+│   │   ├── layout/          # Titlebar (Frameless), Sidebar
+│   │   └── ...
+│   ├── pages/               # SettingsPage (Audio/UI), Dashboard
+│   ├── store/               # Zustand (Audio/Session persistence)
+│   └── styles/              # tailwind.config.ts e globals.css
+├── public/                  # Assets estáticos (logo.png para build)
 ├── src-tauri/               # Rust backend
-│   ├── src/
-│   │   ├── main.rs
-│   │   ├── commands/        # Tauri commands expostos ao frontend
-│   │   │   ├── demo_parser.rs
-│   │   │   └── gsi_listener.rs
-│   │   └── event_publisher.rs  # Publica eventos no Redis
-│   └── tauri.conf.json
+│   ├── icons/               # Launcher icons
+│   └── tauri.conf.json      # Configuração de janela (Frameless/MinSize)
 └── package.json
 ```
+
+## 🎨 Design System
+
+O projeto utiliza um sistema de design dark-first baseado em tokens semânticos definidos em `tailwind.config.js`.
+
+- **Cores**: Sincronizadas com `COLORS.md`.
+- **Janela**: Frameless (sem bordas). Drag area configurada no componente `Titlebar`.
+- **Acessibilidade**: Suporte a múltiplos dispositivos de saída de áudio e controle granular de volume do coach.
+
+## 📦 Automação de Release
+
+As releases são disparadas automaticamente via tags do repositório raiz.
+
+1.  **Build**: Compilação paralela para Windows e Ubuntu.
+2.  **Safety**: Sistema de **Rollback Automático**. Se o build falhar em qualquer plataforma, a tag é removida do repositório remoto para evitar releases inconsistentes.
+3.  **Distribuição**: Sincronização automática via Monorepo Broadcast.
 
 ## Comunicação com o Core Backend
 
