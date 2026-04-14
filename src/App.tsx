@@ -1,3 +1,4 @@
+import React from 'react'
 import { Titlebar } from '@/components/layout/Titlebar'
 import { SettingsPage } from '@/pages/SettingsPage'
 import { Sidebar } from '@/components/layout/Sidebar'
