@@ -1,3 +1,4 @@
+import logo from '@/assets/logo.png'
 import { X, Minus } from 'lucide-react'
 import { appWindow } from '@tauri-apps/api/window'
 import clsx from 'clsx'
@@ -21,8 +22,8 @@ export function Titlebar() {
     >
       {/* Brand area inside titlebar (optional) */}
       <div className="flex items-center gap-2 pointer-events-none">
-        <div className="w-4 h-4 rounded bg-gradient-primary flex items-center justify-center">
-          <span className="text-white text-[10px] font-bold">S</span>
+        <div className="w-4 h-4 flex items-center justify-center">
+          <img src={logo} alt="" className="w-full h-full object-contain" />
         </div>
         <span className="text-caption-xs font-semibold text-text-tertiary">Stratify</span>
       </div>
