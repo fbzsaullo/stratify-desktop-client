@@ -40,7 +40,7 @@ export function Sidebar() {
         {!sidebarCollapsed && (
           <div className="flex flex-col min-w-0">
             <span className="text-subtitle font-bold text-text-primary leading-none">Stratify</span>
-            <span className="text-caption-xs text-text-tertiary">AI Coach · v0.0.1-voice-test</span>
+            <span className="text-caption-xs text-text-tertiary">AI Coach · v0.0.2-voice-fixed</span>
           </div>
         )}
       </div>
