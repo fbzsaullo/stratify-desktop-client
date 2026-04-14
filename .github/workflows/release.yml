@@ -5,6 +5,7 @@ on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
 
 jobs:
   publish:
@@ -45,3 +46,14 @@ jobs:
           releaseBody: "See the assets to download this version and install."
           releaseDraft: false
           prerelease: false
+
+  rollback:
+    needs: publish
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete Tag on Failure
+        run: |
+          git push --delete origin ${{ github.ref_name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

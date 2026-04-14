@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react'
-import { Volume2, Music, Headphones, Speaker, RefreshCw, Play } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Volume2, Headphones, Speaker, RefreshCw, Play } from 'lucide-react'
 import { useAppStore } from '@/store/useAppStore'
 import clsx from 'clsx'
 
@@ -7,7 +7,6 @@ export function SettingsPage() {
   const { audioSettings, setAudioVolume, setAudioDevice } = useAppStore()
   const [devices, setDevices] = useState<MediaDeviceInfo[]>([])
   const [isRefreshing, setIsRefreshing] = useState(false)
-  const audioRef = useRef<HTMLAudioElement | null>(null)
 
   const refreshDevices = async () => {
     setIsRefreshing(true)
