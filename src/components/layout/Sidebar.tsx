@@ -1,4 +1,3 @@
-import logo from '@/assets/logo.png'
 import { useAppStore } from '@/store/useAppStore'
 import { clsx } from 'clsx'
 import {
@@ -36,12 +35,12 @@ export function Sidebar() {
         sidebarCollapsed && 'justify-center px-2'
       )}>
         <div className="w-8 h-8 flex items-center justify-center flex-shrink-0">
-          <img src={logo} alt="Stratify" className="w-full h-full object-contain" />
+          <img src="/logo.png" alt="Stratify" className="w-full h-full object-contain" />
         </div>
         {!sidebarCollapsed && (
           <div className="flex flex-col min-w-0">
             <span className="text-subtitle font-bold text-text-primary leading-none">Stratify</span>
-            <span className="text-caption-xs text-text-tertiary">AI Coach · v0.0.2-voice-fixed</span>
+            <span className="text-caption-xs text-text-tertiary">AI Coach · v0.0.5-logo-build-fix</span>
           </div>
         )}
       </div>
