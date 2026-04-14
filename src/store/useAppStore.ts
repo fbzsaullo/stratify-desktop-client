@@ -89,6 +89,14 @@ interface AppStore {
   setActivePage: (page: string) => void
   sidebarCollapsed: boolean
   toggleSidebar: () => void
+
+  // Audio Settings
+  audioSettings: {
+    volume: number
+    outputDeviceId: string
+  }
+  setAudioVolume: (volume: number) => void
+  setAudioDevice: (id: string) => void
 }
 
 // ================================================================
@@ -166,6 +174,16 @@ export const useAppStore = create<AppStore>()(
       sidebarCollapsed: false,
       toggleSidebar: () =>
         set((s) => ({ sidebarCollapsed: !s.sidebarCollapsed })),
+
+      // Audio
+      audioSettings: {
+        volume: 80,
+        outputDeviceId: 'default',
+      },
+      setAudioVolume: (volume) =>
+        set((s) => ({ audioSettings: { ...s.audioSettings, volume } })),
+      setAudioDevice: (outputDeviceId) =>
+        set((s) => ({ audioSettings: { ...s.audioSettings, outputDeviceId } })),
     }),
     {
       name: 'stratify-app-store',
@@ -175,6 +193,7 @@ export const useAppStore = create<AppStore>()(
         player: s.player,
         matches: s.matches,
         sidebarCollapsed: s.sidebarCollapsed,
+        audioSettings: s.audioSettings,
       }),
     }
   )

@@ -35,9 +35,44 @@
   }
 
   body {
-    @apply bg-bg-primary overflow-hidden;
-    height: 100vh;
-    width: 100vw;
+   /* Tauri Draggable Region */
+[data-tauri-drag-region] {
+  cursor: default;
+}
+
+[data-tauri-drag-region] button,
+[data-tauri-drag-region] a,
+[data-tauri-drag-region] select {
+  cursor: pointer;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-subtle);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-tertiary);
+}
+
+/* Layout Robustness */
+.main-content-area {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
   }
 
   #root {

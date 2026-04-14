@@ -44,14 +44,7 @@
       "windows": {
         "certificateThumbprint": null,
         "digestAlgorithm": "sha256",
-        "timestampUrl": "",
-        "nsis": {
-          "installerIcon": "icons/icon.ico",
-          "headerImage": "assets/installer/header.bmp",
-          "sidebarImage": "assets/installer/sidebar.bmp",
-          "license": "assets/installer/LICENSE.txt",
-          "displayLanguageSelector": true
-        }
+        "timestampUrl": ""
       }
     },
     "security": {
@@ -63,10 +56,13 @@
     "windows": [
       {
         "fullscreen": false,
-        "height": 600,
         "resizable": true,
         "title": "Stratify AI Coach",
-        "width": 800
+        "width": 1280,
+        "height": 800,
+        "minWidth": 1024,
+        "minHeight": 720,
+        "decorations": false
       }
     ]
   }
