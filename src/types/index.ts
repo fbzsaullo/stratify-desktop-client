@@ -30,19 +30,19 @@ export type AnalyzerName =
 // Feedback (output de um analyzer)
 // ----------------------------------------------------------------
 export interface Feedback {
-  id: string
+  id: string | number
   analyzer: AnalyzerName
   severity: FeedbackSeverity
   category: FeedbackCategory
   title: string
-  description: string
-  actionable_tip: string
+  description?: string | null
+  actionable_tip?: string | null
   confidence_score: number
   related_round?: number
   related_tick?: number
-  occurred_at: string
-  match_id: string
-  player_id: string
+  occurred_at?: string
+  match_id?: string
+  player_id?: string
 }
 
 // ----------------------------------------------------------------

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { MOCK_MATCHES } from '@/services/mockData'
+import { useAppStore } from '@/store/useAppStore'
 import { Badge } from '@/components/ui/Badge'
 import { clsx } from 'clsx'
 
@@ -15,8 +15,9 @@ function formatDuration(s: number) {
 
 export function HistoryPage() {
   const [filter, setFilter] = useState<'all' | 'win' | 'loss'>('all')
+  const { matches, fetchReport, setActivePage } = useAppStore()
 
-  const filtered = MOCK_MATCHES.filter((m) =>
+  const filtered = matches.filter((m) =>
     filter === 'all' ? true : m.result === filter
   )
 
@@ -28,7 +29,7 @@ export function HistoryPage() {
           <div>
             <h1 className="text-title-lg text-text-primary">Histórico de Partidas</h1>
             <p className="text-body-sm text-text-secondary mt-1">
-              {MOCK_MATCHES.length} partidas analisadas
+              {matches.length} partidas analisadas
             </p>
           </div>
 
@@ -56,7 +57,11 @@ export function HistoryPage() {
           {filtered.map((match) => (
             <div
               key={match.id}
-              className="card card-hover p-4 flex items-center gap-4"
+              onClick={() => {
+                fetchReport(match.id)
+                setActivePage('report')
+              }}
+              className="card card-hover p-4 flex items-center gap-4 cursor-pointer"
             >
               {/* Result stripe */}
               <div className={clsx(
@@ -67,9 +72,9 @@ export function HistoryPage() {
               {/* Map */}
               <div className="w-24 flex-shrink-0">
                 <p className="text-subtitle font-semibold text-text-primary">
-                  {match.map.replace('de_', '').toUpperCase()}
+                  {match.map.toUpperCase()}
                 </p>
-                <p className="text-caption text-text-tertiary">{match.mode}</p>
+                <p className="text-caption text-text-tertiary">Competitive</p>
               </div>
 
               {/* Score */}
@@ -80,7 +85,7 @@ export function HistoryPage() {
                     label={match.result === 'win' ? 'Vitória' : 'Derrota'}
                   />
                   <span className="text-body-sm text-text-secondary tabular">
-                    {match.score_team} — {match.score_opponent}
+                    {match.score}
                   </span>
                 </div>
               </div>
@@ -101,18 +106,18 @@ export function HistoryPage() {
               <div className="text-center w-16">
                 <p className={clsx(
                   'text-subtitle font-semibold tabular',
-                  match.feedbacks_count >= 5 ? 'text-danger' :
-                  match.feedbacks_count >= 3 ? 'text-warning' : 'text-success'
+                  match.feedback_count >= 5 ? 'text-danger' :
+                  match.feedback_count >= 3 ? 'text-warning' : 'text-success'
                 )}>
-                  {match.feedbacks_count}
+                  {match.feedback_count}
                 </p>
                 <p className="text-caption-xs text-text-tertiary">ERROS</p>
               </div>
 
               {/* Duration & date */}
               <div className="text-right w-24">
-                <p className="text-caption text-text-secondary tabular">{formatDuration(match.duration_seconds)}</p>
-                <p className="text-caption-xs text-text-tertiary">{formatDate(match.played_at)}</p>
+                <p className="text-caption text-text-secondary tabular">{formatDuration(match.duration_seconds || 0)}</p>
+                <p className="text-caption-xs text-text-tertiary">{formatDate(match.created_at)}</p>
               </div>
             </div>
           ))}

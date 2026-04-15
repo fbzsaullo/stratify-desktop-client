@@ -2,12 +2,11 @@ import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import type {
   PlayerStats,
-  Match,
   FeatureConfig,
   AnalysisSession,
   Feedback,
-  MatchReport,
 } from '@/types'
+import { fetchMatchReports, fetchMatchReport, FullMatchReport, MatchSummary } from '@/api/matchReports'
 
 // ================================================================
 // MOCK DATA — Fase 1 MVP (substituir por API calls depois)
@@ -64,8 +63,9 @@ interface AppStore {
   setPlayer: (player: PlayerStats) => void
 
   // Matches
-  matches: Match[]
-  addMatch: (match: Match) => void
+  matches: MatchSummary[]
+  fetchMatches: () => Promise<void>
+  addMatch: (match: MatchSummary) => void
 
   // Features
   features: FeatureConfig[]
@@ -77,12 +77,13 @@ interface AppStore {
   updateSessionProgress: (progress: number, step?: string) => void
   pushEvent: (type: string, payload: any) => void
   addFeedback: (feedback: Feedback) => void
-  finishAnalysis: (matchReport: MatchReport) => void
+  finishAnalysis: (matchReport: FullMatchReport) => void
   resetSession: () => void
 
   // Current Report
-  currentReport: MatchReport | null
-  setCurrentReport: (report: MatchReport | null) => void
+  currentReport: FullMatchReport | null
+  setCurrentReport: (report: FullMatchReport | null) => void
+  fetchReport: (id: string) => Promise<void>
 
   // UI State
   activePage: string
@@ -111,6 +112,14 @@ export const useAppStore = create<AppStore>()(
 
       // Matches
       matches: [],
+      fetchMatches: async () => {
+        try {
+          const matches = await fetchMatchReports()
+          set({ matches })
+        } catch (err) {
+          console.error('Failed to fetch matches', err)
+        }
+      },
       addMatch: (match) =>
         set((s) => ({ matches: [match, ...s.matches].slice(0, 50) })),
 
@@ -167,6 +176,14 @@ export const useAppStore = create<AppStore>()(
       // Report
       currentReport: null,
       setCurrentReport: (report) => set({ currentReport: report }),
+      fetchReport: async (id: string) => {
+        try {
+          const report = await fetchMatchReport(id)
+          set({ currentReport: report })
+        } catch (err) {
+          console.error('Failed to fetch report', err)
+        }
+      },
 
       // UI
       activePage: 'dashboard',

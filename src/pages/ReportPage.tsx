@@ -12,9 +12,9 @@ import { FeedbackCard } from '@/components/ui/FeedbackCard'
 import { StatCard } from '@/components/ui/StatCard'
 import { ProgressBar } from '@/components/ui/ProgressBar'
 import { Badge } from '@/components/ui/Badge'
-import { MOCK_REPORT } from '@/services/mockData'
 import { clsx } from 'clsx'
-import { Target, ShieldAlert, ChevronDown, ChevronUp, Info } from 'lucide-react'
+import { useAppStore } from '@/store/useAppStore'
+import { ArrowLeft, Target, ShieldAlert, ChevronDown, ChevronUp, Info } from 'lucide-react'
 import type { Feedback } from '@/types'
 
 // CATEGORY_LABELS não está sendo usado no momento na UI deste componente
@@ -179,11 +179,28 @@ function AntiNoobMetrics() {
 }
 
 export function ReportPage() {
-  const report        = MOCK_REPORT
-  const { summary }   = report
+  const { currentReport, setActivePage } = useAppStore()
 
-  const antiNoobFbs   = report.feedbacks_by_analyzer['anti-noob-detector'] || []
-  const crosshairFbs  = report.feedbacks_by_analyzer['crosshair-coach']    || []
+  if (!currentReport) {
+    return (
+      <div className="h-full flex flex-col items-center justify-center gap-4 text-center p-6">
+        <div className="w-16 h-16 rounded-full bg-surface-raised flex items-center justify-center animate-pulse">
+          <Target className="text-text-tertiary" size={32} />
+        </div>
+        <div>
+          <h2 className="text-subtitle font-bold text-text-primary">Nenhum relatório selecionado</h2>
+          <p className="text-body-sm text-text-secondary mt-1">Selecione uma partida no dashboard para ver os detalhes.</p>
+        </div>
+        <button onClick={() => setActivePage('dashboard')} className="btn-primary">
+           Voltar ao Dashboard
+        </button>
+      </div>
+    )
+  }
+
+  const { match, summary, feedbacks_by_analyzer } = currentReport
+  const antiNoobFbs   = feedbacks_by_analyzer['anti-noob-detector'] || []
+  const crosshairFbs  = feedbacks_by_analyzer['crosshair-coach']    || []
 
   return (
     <div className="h-full overflow-y-auto">
@@ -191,16 +208,24 @@ export function ReportPage() {
 
         {/* === HEADER === */}
         <div className="flex items-start justify-between gap-4">
-          <div>
-            <h1 className="text-title-lg text-text-primary">Relatório da Partida</h1>
-            <p className="text-body-sm text-text-secondary mt-1">
-              {report.match.map.replace('de_', '').toUpperCase()} · {report.match.mode} ·{' '}
-              {new Date(report.match.played_at).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' })}
-            </p>
+          <div className="flex items-center gap-3">
+            <button 
+              onClick={() => setActivePage('dashboard')}
+              className="p-2 hover:bg-surface-raised rounded-full transition-colors text-text-tertiary hover:text-text-primary"
+            >
+              <ArrowLeft size={20} />
+            </button>
+            <div>
+              <h1 className="text-title-lg text-text-primary">Relatório da Partida</h1>
+              <p className="text-body-sm text-text-secondary mt-1">
+                {match.map.toUpperCase()} · Competitive ·{' '}
+                {new Date(match.created_at).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' })}
+              </p>
+            </div>
           </div>
           <Badge
-            severity={report.match.result === 'win' ? 'success' : 'error'}
-            label={report.match.result === 'win' ? `Vitória ${report.match.score_team}–${report.match.score_opponent}` : `Derrota ${report.match.score_team}–${report.match.score_opponent}`}
+            severity={match.result === 'win' ? 'success' : 'error'}
+            label={match.result === 'win' ? `Vitória ${match.score}` : `Derrota ${match.score}`}
           />
         </div>
 

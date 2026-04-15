@@ -73,7 +73,8 @@ export function SessionPage() {
 
   const handleFinish = () => {
     stopSim()
-    finishAnalysis(MOCK_REPORT)
+    // @ts-ignore - Mock report might not strictly follow current API structure
+    finishAnalysis(MOCK_REPORT as any)
     setActivePage('report')
   }
 

@@ -1,16 +1,11 @@
 import { useEffect } from 'react'
 import { useAppStore } from '@/store/useAppStore'
-import { StatCard } from '@/components/ui/StatCard'
-import { FeedbackCard } from '@/components/ui/FeedbackCard'
-import { SkillBars } from '@/components/ui/ProgressBar'
-import { Badge } from '@/components/ui/Badge'
-import {
-  MOCK_PLAYER,
-  MOCK_MATCHES,
-  MOCK_REPORT,
-} from '@/services/mockData'
+import { MOCK_PLAYER } from '@/services/mockData'
 import { clsx } from 'clsx'
 import { Upload, Play, TrendingUp, AlertTriangle, CheckCircle } from 'lucide-react'
+import { StatCard } from '@/components/ui/StatCard'
+import { Badge } from '@/components/ui/Badge'
+import { SkillBars } from '@/components/ui/ProgressBar'
 
 // Format seconds to mm:ss
 function formatDuration(s: number) {
@@ -31,25 +26,20 @@ function formatDate(iso: string) {
 }
 
 export function DashboardPage() {
-  const { setPlayer, matches, addMatch } = useAppStore()
+  const { matches, fetchMatches, setActivePage, fetchReport } = useAppStore()
+  const player = useAppStore((s) => s.player) || MOCK_PLAYER
 
-  // Load mock data on first render
+  // Load real data on first render + polling
   useEffect(() => {
-    setPlayer(MOCK_PLAYER)
-    if (matches.length === 0) {
-      MOCK_MATCHES.forEach(addMatch)
-    }
-  }, [])
+    fetchMatches()
+    const int = setInterval(fetchMatches, 10000) // Poll matches every 10s
+    return () => clearInterval(int)
+  }, [fetchMatches])
 
-  const player = MOCK_PLAYER
-  const recentMatches = MOCK_MATCHES.slice(0, 4)
-  const topFeedbacks = MOCK_REPORT.feedbacks_by_analyzer['anti-noob-detector']?.slice(0, 2) || []
-  const crosshairFeedbacks = MOCK_REPORT.feedbacks_by_analyzer['crosshair-coach']?.slice(0, 1) || []
-  const criticalFeedbacks = [...topFeedbacks, ...crosshairFeedbacks]
-
-  const winRate = Math.round(
-    (recentMatches.filter((m) => m.result === 'win').length / recentMatches.length) * 100
-  )
+  const recentMatches = matches.slice(0, 4)
+  const winRate = recentMatches.length > 0 
+    ? Math.round((recentMatches.filter((m) => m.result === 'win').length / recentMatches.length) * 100)
+    : 0
 
   return (
     <div className="h-full overflow-y-auto">
@@ -100,7 +90,7 @@ export function DashboardPage() {
           />
           <StatCard
             label="Erros Críticos"
-            value={MOCK_REPORT.summary.critical_errors}
+            value={recentMatches[0]?.feedback_count || 0}
             icon={<AlertTriangle size={15} />}
             accent="danger"
             trend="down"
@@ -132,15 +122,27 @@ export function DashboardPage() {
             </div>
 
             <div className="flex flex-col gap-2">
-              {criticalFeedbacks.map((fb) => (
-                <FeedbackCard key={fb.id} feedback={fb} />
-              ))}
-
-              {criticalFeedbacks.length === 0 && (
+              {recentMatches.length === 0 ? (
                 <div className="card p-8 flex flex-col items-center gap-2 text-center">
                   <span className="text-3xl">🎮</span>
                   <p className="text-subtitle text-text-primary">Nenhuma partida analisada ainda</p>
                   <p className="text-body-sm text-text-secondary">Arraste um arquivo .dem ou inicie uma sessão de gravação</p>
+                </div>
+              ) : (
+                <div className="card p-5 bg-surface-raised border border-border-subtle flex flex-col gap-3">
+                   <p className="text-body-sm text-text-secondary">
+                     Sua última partida em <span className="text-text-primary font-bold">{recentMatches[0].map}</span> gerou 
+                     <span className="text-danger font-bold"> {recentMatches[0].feedback_count} feedbacks</span>.
+                   </p>
+                   <button 
+                     className="btn-ghost btn-sm w-fit"
+                     onClick={() => {
+                        fetchReport(recentMatches[0].id)
+                        setActivePage('report')
+                     }}
+                   >
+                     Ver Relatório Completo →
+                   </button>
                 </div>
               )}
             </div>
@@ -172,6 +174,10 @@ export function DashboardPage() {
                 {recentMatches.map((match, i) => (
                   <tr
                     key={match.id}
+                    onClick={() => {
+                      fetchReport(match.id)
+                      setActivePage('report')
+                    }}
                     className={clsx(
                       'border-b border-border-subtle hover:bg-surface-raised transition-colors cursor-pointer',
                       i === recentMatches.length - 1 && 'border-0'
@@ -204,26 +210,26 @@ export function DashboardPage() {
                     </td>
                     <td className="px-4 py-3">
                       <span className="text-body-sm tabular text-text-secondary">
-                        {match.score_team} — {match.score_opponent}
+                        {match.score}
                       </span>
                     </td>
                     <td className="px-4 py-3">
                       <span className="text-body-sm text-text-secondary tabular">
-                        {formatDuration(match.duration_seconds)}
+                        {formatDuration(match.duration_seconds || 0)}
                       </span>
                     </td>
                     <td className="px-4 py-3">
                       <span className="text-caption text-text-tertiary">
-                        {formatDate(match.played_at)}
+                        {formatDate(match.created_at)}
                       </span>
                     </td>
                     <td className="px-4 py-3">
                       <span className={clsx(
                         'text-body-sm font-medium tabular',
-                        match.feedbacks_count >= 5 ? 'text-danger' :
-                        match.feedbacks_count >= 3 ? 'text-warning' : 'text-success'
+                        match.feedback_count >= 5 ? 'text-danger' :
+                        match.feedback_count >= 3 ? 'text-warning' : 'text-success'
                       )}>
-                        {match.feedbacks_count}
+                        {match.feedback_count}
                       </span>
                     </td>
                   </tr>
