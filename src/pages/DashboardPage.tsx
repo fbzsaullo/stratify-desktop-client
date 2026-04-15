@@ -1,6 +1,5 @@
 import { useEffect } from 'react'
 import { useAppStore } from '@/store/useAppStore'
-import { MOCK_PLAYER } from '@/services/mockData'
 import { clsx } from 'clsx'
 import { Upload, Play, TrendingUp, AlertTriangle, CheckCircle } from 'lucide-react'
 import { StatCard } from '@/components/ui/StatCard'
@@ -27,7 +26,7 @@ function formatDate(iso: string) {
 
 export function DashboardPage() {
   const { matches, fetchMatches, setActivePage, fetchReport } = useAppStore()
-  const player = useAppStore((s) => s.player) || MOCK_PLAYER
+  const player = useAppStore((s) => s.player)
 
   // Load real data on first render + polling
   useEffect(() => {
@@ -49,10 +48,10 @@ export function DashboardPage() {
         <div className="flex items-start justify-between gap-4">
           <div className="flex flex-col gap-1">
             <h1 className="text-title-xl text-text-primary">
-              Olá, <span className="text-gradient-primary">{player.display_name}</span> 👋
+              Olá, <span className="text-gradient-primary">{player?.display_name || 'Jogador'}</span> 👋
             </h1>
             <p className="text-body text-text-secondary">
-              {player.rank} · {player.total_matches} partidas analisadas
+              {player ? `${player.rank} · ${player.total_matches} partidas analisadas` : 'Buscando perfil...'}
             </p>
           </div>
 
@@ -66,10 +65,10 @@ export function DashboardPage() {
         <div className="grid grid-cols-4 gap-3">
           <StatCard
             label="Partidas Analisadas"
-            value={player.total_matches}
+            value={player?.total_matches || 0}
             icon={<Play size={15} />}
             trend="up"
-            trendLabel="+3 esta semana"
+            trendLabel="Sincronizado"
           />
           <StatCard
             label="Win Rate (recente)"
@@ -107,9 +106,15 @@ export function DashboardPage() {
               <span className="section-title">Habilidades</span>
               <div className="flex-1 divider" />
             </div>
-            <SkillBars skills={player.skill_radar} />
+            {player ? (
+              <SkillBars skills={player.skill_radar} />
+            ) : (
+              <div className="flex flex-1 items-center justify-center text-caption text-text-tertiary">
+                Aguardando dados de habilidade...
+              </div>
+            )}
             <p className="text-caption text-text-tertiary text-center mt-1">
-              Baseado nas últimas {player.total_matches} partidas
+              Baseado nas partidas reais analisadas
             </p>
           </div>
 

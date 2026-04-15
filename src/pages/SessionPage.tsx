@@ -1,86 +1,35 @@
-import { useEffect, useState, useRef } from 'react'
 import { useAppStore } from '@/store/useAppStore'
 import { FeedbackCard } from '@/components/ui/FeedbackCard'
 import { ProgressBar } from '@/components/ui/ProgressBar'
 import { Badge } from '@/components/ui/Badge'
-import { MOCK_FEEDBACKS, MOCK_REPORT } from '@/services/mockData'
 import { clsx } from 'clsx'
 import { Play, Square, Activity, ShieldAlert, Save } from 'lucide-react'
 
-// Simulation events sequences
-const EVENT_STREAM = [
-  { type: 'MatchStarted', payload: { map: 'de_dust2', mode: 'Competitive' }, delay: 500 },
-  { type: 'RoundStarted', payload: { round: 1 }, delay: 1500 },
-  { type: 'PlayerPositioned', payload: { x: 120, y: 450, z: 10 }, delay: 2000 },
-  { type: 'CrosshairMoved', payload: { pitch: 12.5, yaw: 45.2 }, delay: 2500 },
-  { type: 'FeedbackGenerated', payload: MOCK_FEEDBACKS[0], isFeedback: true, delay: 3000 }, // Crosshair low
-  { type: 'PlayerKilled', payload: { victim: 'FabrizioCS', weapon: 'ak47', is_headshot: true }, delay: 4500 },
-  { type: 'FeedbackGenerated', payload: MOCK_FEEDBACKS[1], isFeedback: true, delay: 5000 }, // Bad reload
-  { type: 'RoundEnded', payload: { winner: 'T', reason: 'target_bombed' }, delay: 6500 },
-  { type: 'RoundStarted', payload: { round: 2 }, delay: 8000 },
-  { type: 'UtilityUsed', payload: { type: 'flashbang', effectiveness: 0.2 }, delay: 9500 },
-  { type: 'FeedbackGenerated', payload: MOCK_FEEDBACKS[2], isFeedback: true, delay: 10500 }, // Death no util
-  { type: 'MatchEnded', payload: { winner: 'CT', score: '16-11' }, delay: 12000 },
-]
-
+/**
+ * SessionPage (Real-Only Version)
+ * Monitors game events in real-time. No mock data or simulations.
+ */
 export function SessionPage() {
   const {
     session,
     startAnalysis,
     resetSession,
-    pushEvent,
-    addFeedback,
-    updateSessionProgress,
     finishAnalysis,
     setActivePage,
   } = useAppStore()
 
-  const [, setSimIndex] = useState(-1)
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-
-  const stopSim = () => {
-    if (timerRef.current) clearTimeout(timerRef.current)
-    setSimIndex(-1)
-  }
-
-  const runSimStep = (index: number) => {
-    if (index >= EVENT_STREAM.length) {
-      updateSessionProgress(100, 'Análise finalizada')
-      return
-    }
-
-    const step = EVENT_STREAM[index]
-    timerRef.current = setTimeout(() => {
-      if (step.isFeedback) {
-        addFeedback(step.payload)
-      } else {
-        pushEvent(step.type, step.payload)
-      }
-
-      const progress = Math.round(((index + 1) / EVENT_STREAM.length) * 100)
-      updateSessionProgress(progress, `Processando: ${step.type}`)
-      setSimIndex(index)
-      runSimStep(index + 1)
-    }, step.delay - (index > 0 ? EVENT_STREAM[index - 1].delay : 0))
-  }
-
   const handleStart = () => {
     resetSession()
     startAnalysis()
-    setSimIndex(0)
-    runSimStep(0)
   }
 
   const handleFinish = () => {
-    stopSim()
-    // @ts-ignore - Mock report might not strictly follow current API structure
-    finishAnalysis(MOCK_REPORT as any)
+    // Finalize the session and move to report
+    // Since we are now in "Real Mode", finishAnalysis will soon be handled by the Backend match end event.
+    // For now, this manually triggers the current results view.
+    finishAnalysis(null as any) // We use null because the real report will be fetched by ID
     setActivePage('report')
   }
-
-  useEffect(() => {
-    return () => stopSim()
-  }, [])
 
   const isIdle = session.status === 'idle'
   const isAnalyzing = session.status === 'analyzing'
@@ -135,11 +84,11 @@ export function SessionPage() {
           </div>
 
           <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-3">
-            {session.feedbacks.length === 0 && !isAnalyzing && (
+            {session.feedbacks.length === 0 && (
               <div className="h-full flex flex-col items-center justify-center text-center opacity-40">
                 <ShieldAlert size={48} className="mb-4 text-text-tertiary" />
                 <p className="text-subtitle font-medium">Nenhum feedback ainda</p>
-                <p className="text-caption">Inicie a captura para começar a análise live</p>
+                <p className="text-caption">Inicie a captura e comece a jogar CS2</p>
               </div>
             )}
 
@@ -152,25 +101,22 @@ export function SessionPage() {
         {/* Right — Technical Event Log */}
         <div className="col-span-2 flex flex-col overflow-hidden bg-bg-secondary">
           <div className="p-4 border-b border-border-subtle flex items-center justify-between bg-surface/30">
-            <span className="section-title">Log de Eventos (Raw Feed)</span>
-            <div className="flex items-center gap-3">
-               <span className="text-[10px] text-text-tertiary font-mono">LIVE_TICK: 14201</span>
-            </div>
+            <span className="section-title">Log de Eventos (Real-time)</span>
           </div>
 
           {/* Progress Bar */}
           <div className="px-4 py-3 bg-surface/50 border-b border-border-subtle">
             <ProgressBar
               value={session.progress}
-              label={session.current_step || 'Aguardando dados...'}
+              label={session.current_step || (isAnalyzing ? 'Ouvindo eventos do jogo...' : 'Aguardando partida...')}
               animated={isAnalyzing}
               size="sm"
             />
           </div>
 
           <div className="flex-1 overflow-y-auto p-4 font-mono text-[11px] flex flex-col-reverse gap-1.5">
-            {session.events.length === 0 && (
-              <p className="text-text-tertiary italic">Listening for game state integration...</p>
+            {session.events.length === 0 && isAnalyzing && (
+              <p className="text-text-tertiary italic">Listening for Game State Integration (GSI)...</p>
             )}
             {session.events.map((ev) => (
               <div key={ev.id} className="flex gap-2 animate-fade-in group">
@@ -181,15 +127,15 @@ export function SessionPage() {
             ))}
           </div>
 
-          {/* HUD Simulator info */}
+          {/* HUD Info */}
           <div className="p-4 border-t border-border-subtle bg-surface/50">
             <div className="flex items-center gap-3 p-3 rounded-lg border border-primary/20 bg-primary/5">
               <div className="p-2 rounded bg-primary/10 text-primary">
                 <Activity size={16} />
               </div>
               <div>
-                <p className="text-caption-xs font-bold text-primary uppercase tracking-widest">Overlay Ativo</p>
-                <p className="text-caption text-text-secondary">Os alertas críticos estão sendo enviados ao seu HUD in-game.</p>
+                <p className="text-caption-xs font-bold text-primary uppercase tracking-widest">Coaching Ativo</p>
+                <p className="text-caption text-text-secondary">Os alertas críticos são processados instantaneamente.</p>
               </div>
             </div>
           </div>
