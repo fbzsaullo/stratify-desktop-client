@@ -8,7 +8,7 @@
   },
   "package": {
     "productName": "Stratify",
-    "version": "0.1.0-beta.5"
+    "version": "0.1.0-beta.6"
   },
   "tauri": {
     "allowlist": {
@@ -50,14 +50,11 @@
       "windows": {
         "certificateThumbprint": null,
         "digestAlgorithm": "sha256",
-        "timestampUrl": ""
-      },
-      "nsis": {
-        "oneClick": false,
-        "allowToChangeInstallationDirectory": true,
-        "shortcutName": "Stratify",
-        "headerImage": "icons/icon.ico",
-        "installIcon": "icons/icon.ico"
+        "timestampUrl": "",
+        "nsis": {
+          "headerImage": "icons/icon.ico",
+          "installerIcon": "icons/icon.ico"
+        }
       }
     },
     "security": {
