@@ -7,7 +7,7 @@
     "distDir": "../dist"
   },
   "package": {
-    "productName": "stratify",
+    "productName": "Stratify",
     "version": "0.1.0-beta.3"
   },
   "tauri": {
@@ -23,7 +23,7 @@
     "bundle": {
       "active": true,
       "category": "DeveloperTool",
-      "copyright": "",
+      "copyright": "Copyright © 2026 Stratify",
       "deb": {
         "depends": []
       },
@@ -35,8 +35,8 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "com.stratify.app",
-      "longDescription": "",
+      "identifier": "ai.stratify.app",
+      "longDescription": "Stratify is a next-generation AI coaching platform that turns your gameplay data into actionable feedback.",
       "macOS": {
         "entitlements": null,
         "exceptionDomain": "",
@@ -45,7 +45,7 @@
         "signingIdentity": null
       },
       "resources": [],
-      "shortDescription": "",
+      "shortDescription": "AI-powered performance coach for CS2",
       "targets": "all",
       "windows": {
         "certificateThumbprint": null,
