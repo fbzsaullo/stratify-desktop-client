@@ -1,6 +1,6 @@
 {
   "name": "stratify-desktop-client",
-  "version": "0.1.0-beta.7",
+  "version": "0.1.0-beta.8",
   "description": "Stratify AI Coach — Desktop Client (Tauri + React)",
   "private": true,
   "type": "module",
