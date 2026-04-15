@@ -8,7 +8,7 @@
   },
   "package": {
     "productName": "Stratify",
-    "version": "0.1.0-beta.3"
+    "version": "0.1.0-beta.5"
   },
   "tauri": {
     "allowlist": {
@@ -46,11 +46,18 @@
       },
       "resources": [],
       "shortDescription": "AI-powered performance coach for CS2",
-      "targets": "all",
+      "targets": ["nsis", "deb", "dmg"],
       "windows": {
         "certificateThumbprint": null,
         "digestAlgorithm": "sha256",
         "timestampUrl": ""
+      },
+      "nsis": {
+        "oneClick": false,
+        "allowToChangeInstallationDirectory": true,
+        "shortcutName": "Stratify",
+        "headerImage": "icons/icon.ico",
+        "installIcon": "icons/icon.ico"
       }
     },
     "security": {

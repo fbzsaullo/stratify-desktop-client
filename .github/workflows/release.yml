@@ -51,6 +51,7 @@ jobs:
     if: failure()
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - name: Delete Tag on Failure
         run: |
           git push --delete origin ${{ github.ref_name }}
