@@ -7,6 +7,7 @@ import { SessionPage } from '@/pages/SessionPage'
 import { ReportPage } from '@/pages/ReportPage'
 import { FeaturesPage } from '@/pages/FeaturesPage'
 import { HistoryPage } from '@/pages/HistoryPage'
+import { useLiveCoach } from '@/hooks/useLiveCoach'
 import { useAppStore } from '@/store/useAppStore'
 
 const PAGE_MAP: Record<string, React.ComponentType> = {
@@ -21,6 +22,9 @@ const PAGE_MAP: Record<string, React.ComponentType> = {
 export default function App() {
   const { activePage } = useAppStore()
   const PageComponent = PAGE_MAP[activePage] ?? DashboardPage
+
+  // Ativa a escuta do Coach em Tempo Real
+  useLiveCoach()
 
   return (
     <div className="flex bg-bg-primary h-screen w-screen overflow-hidden">

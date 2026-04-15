@@ -113,36 +113,44 @@ export function DashboardPage() {
             </p>
           </div>
 
-          {/* CENTER + RIGHT — Feedbacks críticos */}
+          {/* CENTER — Live Coach Feed */}
           <div className="col-span-2 flex flex-col gap-3">
             <div className="flex items-center gap-2">
-              <span className="section-title">Principais Erros Detectados</span>
+              <span className="section-title">Live Coach Feed</span>
               <div className="flex-1 divider" />
-              <Badge severity="error" label="Fase 1 MVP" />
+              <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-success/10 border border-success/20">
+                <div className="w-2 h-2 rounded-full bg-success animate-pulse" />
+                <span className="text-[10px] font-bold text-success uppercase tracking-wider">Listening</span>
+              </div>
             </div>
 
-            <div className="flex flex-col gap-2">
-              {recentMatches.length === 0 ? (
-                <div className="card p-8 flex flex-col items-center gap-2 text-center">
-                  <span className="text-3xl">🎮</span>
-                  <p className="text-subtitle text-text-primary">Nenhuma partida analisada ainda</p>
-                  <p className="text-body-sm text-text-secondary">Arraste um arquivo .dem ou inicie uma sessão de gravação</p>
+            <div className="flex flex-col gap-2 min-h-[140px]">
+              {useAppStore.getState().liveFeedbacks.length === 0 ? (
+                <div className="card p-6 flex flex-col items-center justify-center gap-2 text-center border-dashed border-border-subtle bg-transparent">
+                  <p className="text-body-sm text-text-tertiary">Aguardando eventos do CS2...</p>
                 </div>
               ) : (
-                <div className="card p-5 bg-surface-raised border border-border-subtle flex flex-col gap-3">
-                   <p className="text-body-sm text-text-secondary">
-                     Sua última partida em <span className="text-text-primary font-bold">{recentMatches[0].map}</span> gerou 
-                     <span className="text-danger font-bold"> {recentMatches[0].feedback_count} feedbacks</span>.
-                   </p>
-                   <button 
-                     className="btn-ghost btn-sm w-fit"
-                     onClick={() => {
-                        fetchReport(recentMatches[0].id)
-                        setActivePage('report')
-                     }}
-                   >
-                     Ver Relatório Completo →
-                   </button>
+                <div className="flex flex-col gap-2">
+                  {useAppStore((s) => s.liveFeedbacks).map((fb) => (
+                    <div 
+                      key={fb.id} 
+                      className="card p-3 bg-surface-raised border-l-4 border-l-primary flex items-start gap-3 animate-in fade-in slide-in-from-left-4 duration-500"
+                    >
+                      <div className="text-xl mt-0.5">
+                        {fb.severity === 'error' ? '🚫' : fb.severity === 'warning' ? '⚠️' : '🎯'}
+                      </div>
+                      <div className="flex flex-col gap-0.5">
+                        <span className="text-body-sm font-bold text-text-primary">{fb.title}</span>
+                        <p className="text-caption text-text-secondary">{fb.actionable_tip || fb.description}</p>
+                      </div>
+                    </div>
+                  ))}
+                  <button 
+                    onClick={() => useAppStore.getState().clearLiveFeed()}
+                    className="text-[10px] text-text-tertiary hover:text-text-secondary w-fit ml-auto uppercase tracking-wider"
+                  >
+                    Limpar Feed
+                  </button>
                 </div>
               )}
             </div>

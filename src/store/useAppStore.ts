@@ -94,10 +94,17 @@ interface AppStore {
   // Audio Settings
   audioSettings: {
     volume: number
+    voiceEnabled: boolean
     outputDeviceId: string
   }
   setAudioVolume: (volume: number) => void
   setAudioDevice: (id: string) => void
+  toggleVoice: () => void
+
+  // Live Feed
+  liveFeedbacks: Feedback[]
+  addLiveFeedback: (fb: Feedback) => void
+  clearLiveFeed: () => void
 }
 
 // ================================================================
@@ -195,12 +202,21 @@ export const useAppStore = create<AppStore>()(
       // Audio
       audioSettings: {
         volume: 80,
+        voiceEnabled: true,
         outputDeviceId: 'default',
       },
       setAudioVolume: (volume) =>
         set((s) => ({ audioSettings: { ...s.audioSettings, volume } })),
       setAudioDevice: (outputDeviceId) =>
         set((s) => ({ audioSettings: { ...s.audioSettings, outputDeviceId } })),
+      toggleVoice: () =>
+        set((s) => ({ audioSettings: { ...s.audioSettings, voiceEnabled: !s.audioSettings.voiceEnabled } })),
+
+      // Live Feed
+      liveFeedbacks: [],
+      addLiveFeedback: (fb) =>
+        set((s) => ({ liveFeedbacks: [fb, ...s.liveFeedbacks].slice(0, 5) })),
+      clearLiveFeed: () => set({ liveFeedbacks: [] }),
     }),
     {
       name: 'stratify-app-store',
