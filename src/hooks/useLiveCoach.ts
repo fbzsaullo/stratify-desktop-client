@@ -21,29 +21,34 @@ export function useLiveCoach() {
       connected() {
         console.log('✅ Connected to Live Coach Channel')
       },
-      disconnected() {
-        console.log('❌ Disconnected from Live Coach Channel')
-      },
       received(data: Feedback) {
-        console.log('🎙️ Live Feedback Received:', data)
-        
-        // 1. Adiciona ao Store (para UI)
+        console.log('🎙️ Received Feedback:', data)
         addLiveFeedback(data)
-
-        // 2. Voz do Coach (TTS)
         if (voiceEnabled && window.speechSynthesis) {
           const utterance = new SpeechSynthesisUtterance(data.actionable_tip || data.title)
           utterance.lang = 'pt-BR'
           utterance.volume = volume / 100
-          utterance.rate = 1.0
+          window.speechSynthesis.cancel()
           window.speechSynthesis.speak(utterance)
         }
       },
     })
 
+    // New: Subscribe to Raw Game Events for the Session Log
+    const eventsSubscription = consumer.subscriptions.create('GameEventsChannel', {
+      connected() {
+        console.log('📡 Connected to Raw Game Events Channel')
+      },
+      received(event: any) {
+        console.log('🎮 Raw Event Received:', event.event_type)
+        useAppStore.getState().pushEvent(event.event_type, event.payload)
+      }
+    })
+
     return () => {
       console.log('🔌 Disconnecting from Live Coach...')
       subscription.unsubscribe()
+      eventsSubscription.unsubscribe()
       consumer.disconnect()
     }
   }, [addLiveFeedback, voiceEnabled, volume])

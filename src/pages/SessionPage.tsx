@@ -114,11 +114,12 @@ export function SessionPage() {
             />
           </div>
 
-          <div className="flex-1 overflow-y-auto p-4 font-mono text-[11px] flex flex-col-reverse gap-1.5">
+          <div className="flex-1 overflow-y-auto p-4 font-mono text-[11px] flex flex-col gap-1.5"
+               ref={(el) => { if (el) el.scrollTop = el.scrollHeight }}>
             {session.events.length === 0 && isAnalyzing && (
               <p className="text-text-tertiary italic">Listening for Game State Integration (GSI)...</p>
             )}
-            {session.events.map((ev) => (
+            {session.events.slice().reverse().map((ev) => (
               <div key={ev.id} className="flex gap-2 animate-fade-in group">
                 <span className="text-text-tertiary group-hover:text-primary transition-colors">[{new Date(ev.timestamp).toLocaleTimeString()}]</span>
                 <span className="text-primary font-bold">{ev.type}</span>
