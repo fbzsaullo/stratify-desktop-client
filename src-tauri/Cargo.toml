@@ -1,6 +1,6 @@
 [package]
 name = "stratify"
-version = "0.1.0-beta.6"
+version = "0.1.0-beta.7"
 description = "Stratify AI Coach — Desktop Client"
 authors = ["Stratify Team"]
 license = "MIT"
